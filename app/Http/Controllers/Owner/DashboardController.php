@@ -1,0 +1,41 @@
+<?php
+
+namespace App\Http\Controllers\Owner;
+
+use App\Http\Controllers\Controller;
+use App\Models\Booking;
+use App\Models\Field;
+use Illuminate\Support\Facades\Auth;
+
+class DashboardController extends Controller
+{
+    public function index()
+    {
+        $owner = Auth::user();
+
+        $fieldIds = Field::where('owner_id', $owner->id)->pluck('id');
+
+        $totalFields    = $fieldIds->count();
+        $totalBookings  = Booking::whereIn('field_id', $fieldIds)->count();
+        $pendingCount   = Booking::whereIn('field_id', $fieldIds)->where('status', 'pending')->count();
+        $confirmedCount = Booking::whereIn('field_id', $fieldIds)->where('status', 'confirmed')->count();
+        $revenue        = Booking::whereIn('field_id', $fieldIds)
+                            ->whereIn('status', ['confirmed', 'completed'])
+                            ->sum('total_price');
+
+        $recentBookings = Booking::whereIn('field_id', $fieldIds)
+                            ->with(['user', 'field', 'schedule'])
+                            ->latest()
+                            ->take(5)
+                            ->get();
+
+        return view('owner.dashboard', compact(
+            'totalFields',
+            'totalBookings',
+            'pendingCount',
+            'confirmedCount',
+            'revenue',
+            'recentBookings',
+        ));
+    }
+}

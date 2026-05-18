@@ -1,0 +1,85 @@
+<?php
+
+namespace App\Http\Controllers\Owner;
+
+use App\Http\Controllers\Controller;
+use App\Models\Booking;
+use App\Models\Field;
+use App\Services\NotificationService;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+
+class BookingController extends Controller
+{
+    public function index(Request $request)
+    {
+        $fieldIds = Field::where('owner_id', Auth::id())->pluck('id');
+
+        $query = Booking::whereIn('field_id', $fieldIds)
+            ->with(['user', 'field', 'schedule']);
+
+        if ($request->filled('status')) {
+            $query->where('status', $request->status);
+        }
+
+        $bookings = $query->latest()->paginate(15);
+
+        return view('owner.bookings.index', compact('bookings'));
+    }
+
+    public function confirm(Booking $booking)
+    {
+        $this->authorizeOwner($booking);
+
+        if (!$booking->isPending()) {
+            return redirect()->back()->with('error', 'Hanya pemesanan pending yang dapat dikonfirmasi.');
+        }
+
+        $booking->update([
+            'status'       => 'confirmed',
+            'confirmed_at' => now(),
+        ]);
+
+        $booking->load(['field', 'user']);
+        NotificationService::bookingConfirmed($booking);
+
+        return redirect()->back()->with('success', "Pemesanan {$booking->booking_code} berhasil dikonfirmasi.");
+    }
+
+    public function cancel(Request $request, Booking $booking)
+    {
+        $this->authorizeOwner($booking);
+
+        if ($booking->isCancelled()) {
+            return redirect()->back()->with('error', 'Pemesanan sudah dibatalkan.');
+        }
+
+        $request->validate([
+            'cancellation_reason' => ['required', 'string', 'max:255'],
+        ]);
+
+        DB::transaction(function () use ($booking, $request) {
+            $booking->update([
+                'status'              => 'cancelled',
+                'cancellation_reason' => $request->cancellation_reason,
+                'cancelled_at'        => now(),
+            ]);
+
+            $booking->schedule->update(['status' => 'available']);
+        });
+
+        $booking->load(['field', 'user']);
+        NotificationService::bookingCancelled($booking, 'owner');
+
+        return redirect()->back()->with('success', "Pemesanan {$booking->booking_code} berhasil dibatalkan.");
+    }
+
+    private function authorizeOwner(Booking $booking): void
+    {
+        $fieldIds = Field::where('owner_id', Auth::id())->pluck('id');
+        if (!$fieldIds->contains($booking->field_id)) {
+            abort(403);
+        }
+    }
+}
