@@ -1,51 +1,68 @@
 <x-app-layout>
     <x-slot name="title">Semua Pemesanan</x-slot>
+    <div class="flex">
+        <x-sidebar section="admin" />
+        <main class="flex-1 min-w-0 py-8 px-4 sm:px-8">
+            <div class="flex items-center justify-between mb-8">
+                <div>
+                    <p class="section-label">Admin Panel</p>
+                    <h1 class="text-2xl font-extrabold text-gray-900">Semua Pemesanan</h1>
+                </div>
+                <form method="GET" class="flex gap-2">
+                    <div class="flex items-center gap-2 border border-gray-200 rounded-lg px-3 py-2 bg-white">
+                        <x-icon name="search" class="w-4 h-4 text-gray-400" />
+                        <input type="text" name="search" value="{{ request('search') }}"
+                            placeholder="Kode booking..."
+                            class="text-sm outline-none bg-transparent w-32 text-gray-700 placeholder-gray-400">
+                    </div>
+                    <select name="status"
+                        class="border border-gray-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-primary focus:border-transparent outline-none bg-white">
+                        <option value="">Semua Status</option>
+                        @foreach(['pending'=>'Pending','confirmed'=>'Dikonfirmasi','cancelled'=>'Dibatalkan','completed'=>'Selesai'] as $v => $l)
+                            <option value="{{ $v }}" {{ request('status') === $v ? 'selected' : '' }}>{{ $l }}</option>
+                        @endforeach
+                    </select>
+                    <button type="submit" class="btn-primary py-2 px-4 text-sm">
+                        <x-icon name="filter" class="w-4 h-4" />
+                    </button>
+                </form>
+            </div>
 
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
-        <h1 class="text-2xl font-bold text-white mb-6">Semua Pemesanan</h1>
-
-        <form method="GET" class="flex flex-wrap gap-3 mb-6">
-            <input type="text" name="search" value="{{ request('search') }}" placeholder="Cari kode booking..."
-                class="px-4 py-2 bg-white/5 border border-white/10 rounded-lg text-white placeholder-gray-600 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/50 flex-1 min-w-40">
-            <select name="status" class="px-4 py-2 bg-white/5 border border-white/10 rounded-lg text-gray-300 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/50">
-                <option value="">Semua Status</option>
-                <option value="pending" {{ request('status') === 'pending' ? 'selected' : '' }}>Pending</option>
-                <option value="confirmed" {{ request('status') === 'confirmed' ? 'selected' : '' }}>Confirmed</option>
-                <option value="cancelled" {{ request('status') === 'cancelled' ? 'selected' : '' }}>Cancelled</option>
-                <option value="completed" {{ request('status') === 'completed' ? 'selected' : '' }}>Completed</option>
-            </select>
-            <button type="submit" class="px-4 py-2 bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 rounded-lg text-sm hover:bg-emerald-500/20 transition-all">Filter</button>
-        </form>
-
-        <div class="bg-gray-900/60 border border-white/5 rounded-2xl overflow-hidden">
-            <div class="overflow-x-auto">
+            <div class="card overflow-hidden">
                 <table class="w-full text-sm">
                     <thead>
-                        <tr class="border-b border-white/5">
-                            <th class="text-left px-5 py-3 text-xs text-gray-500 font-medium">Kode</th>
-                            <th class="text-left px-5 py-3 text-xs text-gray-500 font-medium">Pengguna</th>
-                            <th class="text-left px-5 py-3 text-xs text-gray-500 font-medium">Lapangan</th>
-                            <th class="text-left px-5 py-3 text-xs text-gray-500 font-medium">Tanggal</th>
-                            <th class="text-left px-5 py-3 text-xs text-gray-500 font-medium">Total</th>
-                            <th class="text-left px-5 py-3 text-xs text-gray-500 font-medium">Status</th>
+                        <tr class="border-b border-field bg-accent">
+                            <th class="text-left px-5 py-3 label">Kode</th>
+                            <th class="text-left px-5 py-3 label">Pengguna</th>
+                            <th class="text-left px-5 py-3 label">Lapangan</th>
+                            <th class="text-left px-5 py-3 label hidden md:table-cell">Tanggal</th>
+                            <th class="text-left px-5 py-3 label hidden sm:table-cell">Total</th>
+                            <th class="text-left px-5 py-3 label">Status</th>
                         </tr>
                     </thead>
-                    <tbody class="divide-y divide-white/5">
-                        @foreach($bookings as $booking)
-                            @php $sc = ['pending' => 'text-yellow-400 bg-yellow-500/10 border-yellow-500/20','confirmed' => 'text-emerald-400 bg-emerald-500/10 border-emerald-500/20','cancelled' => 'text-red-400 bg-red-500/10 border-red-500/20','completed' => 'text-blue-400 bg-blue-500/10 border-blue-500/20']; @endphp
-                            <tr class="hover:bg-white/2">
+                    <tbody class="divide-y divide-field">
+                        @forelse($bookings as $booking)
+                            <tr class="hover:bg-accent transition-colors">
                                 <td class="px-5 py-3 font-mono text-xs text-gray-400">{{ $booking->booking_code }}</td>
-                                <td class="px-5 py-3 text-white text-xs">{{ $booking->user->name }}</td>
-                                <td class="px-5 py-3 text-gray-300 text-xs">{{ $booking->field->name }}</td>
-                                <td class="px-5 py-3 text-gray-400 text-xs">{{ $booking->booking_date->format('d M Y') }}</td>
-                                <td class="px-5 py-3 text-white text-xs">Rp {{ number_format($booking->total_price, 0, ',', '.') }}</td>
-                                <td class="px-5 py-3"><span class="px-2 py-0.5 rounded-full border text-[10px] font-medium {{ $sc[$booking->status] ?? '' }}">{{ ucfirst($booking->status) }}</span></td>
+                                <td class="px-5 py-3 text-xs font-semibold text-gray-900">{{ $booking->user->name }}</td>
+                                <td class="px-5 py-3 text-xs text-gray-600">{{ $booking->field->name }}</td>
+                                <td class="px-5 py-3 text-xs text-gray-400 hidden md:table-cell">
+                                    {{ $booking->booking_date->format('d M Y') }}
+                                </td>
+                                <td class="px-5 py-3 text-xs font-bold text-gray-900 hidden sm:table-cell">
+                                    Rp {{ number_format($booking->total_price, 0, ',', '.') }}
+                                </td>
+                                <td class="px-5 py-3">
+                                    <x-status-badge :status="$booking->status" />
+                                </td>
                             </tr>
-                        @endforeach
+                        @empty
+                            <tr><td colspan="6" class="px-5 py-12 text-center text-sm text-gray-400">Tidak ada data pemesanan.</td></tr>
+                        @endforelse
                     </tbody>
                 </table>
             </div>
-        </div>
-        <div class="mt-6">{{ $bookings->links() }}</div>
+            <div class="mt-6">{{ $bookings->links() }}</div>
+        </main>
     </div>
 </x-app-layout>

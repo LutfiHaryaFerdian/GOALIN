@@ -1,34 +1,125 @@
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 @layer base {
-    html {
-        @apply scroll-smooth;
+    :root {
+        --color-primary:       #1a7a3c;
+        --color-primary-dark:  #145f2f;
+        --color-primary-light: #e8f5ee;
+        --color-accent:        #f0f7f2;
+        --color-surface:       #ffffff;
+        --color-text-main:     #111827;
+        --color-text-muted:    #6b7280;
+        --color-border:        #d1fae5;
+        --color-danger:        #dc2626;
+        --color-warning:       #d97706;
     }
+
+    html { @apply scroll-smooth antialiased; }
+
     body {
-        @apply bg-gray-950 text-white;
+        font-family: 'Plus Jakarta Sans', 'Inter', system-ui, sans-serif;
+        @apply bg-accent text-gray-900;
     }
-    [x-cloak] {
-        display: none !important;
+
+    [x-cloak] { display: none !important; }
+
+    h1, h2, h3, h4, h5, h6 {
+        font-family: 'Plus Jakarta Sans', sans-serif;
+        @apply font-bold tracking-tight;
+    }
+}
+
+@layer components {
+    /* ── Pitch line hero background ── */
+    .pitch-bg {
+        background-color: var(--color-primary);
+        background-image:
+            /* outer boundary */
+            linear-gradient(rgba(255,255,255,.08) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(255,255,255,.08) 1px, transparent 1px),
+            /* center circle */
+            radial-gradient(circle at 50% 50%, transparent 18%, rgba(255,255,255,.06) 18.5%, transparent 19%),
+            /* center spot */
+            radial-gradient(circle at 50% 50%, rgba(255,255,255,.12) 1%, transparent 1.5%);
+        background-size: 80px 80px, 80px 80px, 100% 100%, 100% 100%;
+        background-position: center center;
+    }
+
+    /* ── Buttons ── */
+    .btn-primary {
+        @apply bg-primary text-white rounded-lg px-5 py-2.5 font-semibold text-sm
+               hover:bg-primary-dark transition-colors duration-200 inline-flex items-center gap-2;
+    }
+    .btn-secondary {
+        @apply border border-primary text-primary rounded-lg px-5 py-2.5 font-semibold text-sm
+               hover:bg-primary-light transition-colors duration-200 inline-flex items-center gap-2;
+    }
+    .btn-danger {
+        @apply bg-red-600 text-white rounded-lg px-5 py-2.5 font-semibold text-sm
+               hover:bg-red-700 transition-colors duration-200 inline-flex items-center gap-2;
+    }
+    .btn-ghost {
+        @apply text-gray-600 rounded-lg px-4 py-2 font-medium text-sm
+               hover:bg-gray-100 transition-colors duration-200 inline-flex items-center gap-2;
+    }
+
+    /* ── Cards ── */
+    .card {
+        @apply bg-white rounded-2xl border border-field transition-colors duration-200;
+    }
+    .card:hover { @apply border-primary; }
+
+    /* ── Form inputs ── */
+    .input {
+        @apply w-full border border-gray-200 rounded-lg px-4 py-2.5 text-sm text-gray-900
+               focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition;
+    }
+    .label {
+        @apply block text-xs font-semibold uppercase tracking-wide text-gray-500 mb-1.5;
+    }
+
+    /* ── Status badges ── */
+    .badge-pending   { @apply bg-amber-100 text-amber-700 rounded-full px-3 py-0.5 text-xs font-semibold; }
+    .badge-confirmed { @apply bg-green-100 text-green-700 rounded-full px-3 py-0.5 text-xs font-semibold; }
+    .badge-cancelled { @apply bg-red-100 text-red-700 rounded-full px-3 py-0.5 text-xs font-semibold; }
+    .badge-completed { @apply bg-gray-100 text-gray-600 rounded-full px-3 py-0.5 text-xs font-semibold; }
+
+    /* ── Time slots ── */
+    .slot-available {
+        @apply bg-primary-light text-primary rounded-md px-3 py-1.5 text-sm font-medium
+               hover:bg-primary hover:text-white cursor-pointer transition-colors duration-150;
+    }
+    .slot-booked {
+        @apply bg-gray-100 text-gray-400 rounded-md px-3 py-1.5 text-sm font-medium
+               cursor-not-allowed line-through;
+    }
+    .slot-closed {
+        @apply bg-gray-50 text-gray-300 rounded-md px-3 py-1.5 text-sm font-medium cursor-not-allowed;
+    }
+    .slot-selected {
+        @apply bg-primary text-white rounded-md px-3 py-1.5 text-sm font-medium
+               ring-2 ring-offset-1 ring-primary;
+    }
+
+    /* ── Sidebar nav ── */
+    .sidebar-link {
+        @apply flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium
+               text-gray-600 hover:bg-primary-light hover:text-primary transition-colors;
+    }
+    .sidebar-link.active {
+        @apply bg-primary-light text-primary border-l-4 border-primary pl-3 rounded-l-none;
+    }
+
+    /* ── Section divider ── */
+    .section-label {
+        @apply text-xs font-bold uppercase tracking-widest text-primary mb-2;
     }
 }
 
 @layer utilities {
-    .font-outfit {
-        font-family: 'Outfit', 'Inter', system-ui, sans-serif;
-    }
-    .scrollbar-none {
-        -ms-overflow-style: none;
-        scrollbar-width: none;
-    }
-    .scrollbar-none::-webkit-scrollbar {
-        display: none;
-    }
-    .bg-white\/2 {
-        background-color: rgba(255, 255, 255, 0.02);
-    }
-    .bg-white\/3 {
-        background-color: rgba(255, 255, 255, 0.03);
-    }
+    .text-balance { text-wrap: balance; }
 }
