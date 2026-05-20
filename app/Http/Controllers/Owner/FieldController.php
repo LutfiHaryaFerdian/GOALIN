@@ -8,7 +8,6 @@ use App\Models\FieldCategory;
 use App\Models\Location;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
 class FieldController extends Controller
@@ -26,7 +25,7 @@ class FieldController extends Controller
     public function create()
     {
         $categories = FieldCategory::where('is_active', true)->orderBy('name')->get();
-        $locations  = Location::where('is_active', true)->orderBy('city')->get();
+        $locations = Location::where('is_active', true)->orderBy('city')->get();
 
         return view('owner.fields.create', compact('categories', 'locations'));
     }
@@ -34,19 +33,19 @@ class FieldController extends Controller
     public function store(Request $request)
     {
         $data = $request->validate([
-            'name'          => ['required', 'string', 'max:255'],
-            'category_id'   => ['required', 'exists:field_categories,id'],
-            'location_id'   => ['required', 'exists:locations,id'],
-            'description'   => ['nullable', 'string'],
-            'price_per_hour'=> ['required', 'numeric', 'min:1000'],
-            'capacity'      => ['required', 'integer', 'min:1'],
-            'facilities'    => ['nullable', 'array'],
-            'status'        => ['required', 'in:active,inactive,maintenance'],
-            'images.*'      => ['nullable', 'image', 'max:2048'],
+            'name' => ['required', 'string', 'max:255'],
+            'category_id' => ['required', 'exists:field_categories,id'],
+            'location_id' => ['required', 'exists:locations,id'],
+            'description' => ['nullable', 'string'],
+            'price_per_hour' => ['required', 'numeric', 'min:1000'],
+            'capacity' => ['required', 'integer', 'min:1'],
+            'facilities' => ['nullable', 'array'],
+            'status' => ['required', 'in:active,inactive,maintenance'],
+            'images.*' => ['nullable', 'image', 'max:2048'],
         ]);
 
         $data['owner_id'] = Auth::id();
-        $data['slug']     = Str::slug($request->name) . '-' . Str::random(4);
+        $data['slug'] = Str::slug($request->name).'-'.Str::random(4);
 
         // Upload images
         $imagePaths = [];
@@ -67,7 +66,7 @@ class FieldController extends Controller
     {
         $this->authorizeOwner($field);
         $categories = FieldCategory::where('is_active', true)->orderBy('name')->get();
-        $locations  = Location::where('is_active', true)->orderBy('city')->get();
+        $locations = Location::where('is_active', true)->orderBy('city')->get();
 
         return view('owner.fields.edit', compact('field', 'categories', 'locations'));
     }
@@ -77,15 +76,15 @@ class FieldController extends Controller
         $this->authorizeOwner($field);
 
         $data = $request->validate([
-            'name'          => ['required', 'string', 'max:255'],
-            'category_id'   => ['required', 'exists:field_categories,id'],
-            'location_id'   => ['required', 'exists:locations,id'],
-            'description'   => ['nullable', 'string'],
-            'price_per_hour'=> ['required', 'numeric', 'min:1000'],
-            'capacity'      => ['required', 'integer', 'min:1'],
-            'facilities'    => ['nullable', 'array'],
-            'status'        => ['required', 'in:active,inactive,maintenance'],
-            'images.*'      => ['nullable', 'image', 'max:2048'],
+            'name' => ['required', 'string', 'max:255'],
+            'category_id' => ['required', 'exists:field_categories,id'],
+            'location_id' => ['required', 'exists:locations,id'],
+            'description' => ['nullable', 'string'],
+            'price_per_hour' => ['required', 'numeric', 'min:1000'],
+            'capacity' => ['required', 'integer', 'min:1'],
+            'facilities' => ['nullable', 'array'],
+            'status' => ['required', 'in:active,inactive,maintenance'],
+            'images.*' => ['nullable', 'image', 'max:2048'],
         ]);
 
         // Upload new images if provided

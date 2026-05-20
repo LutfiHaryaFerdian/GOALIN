@@ -2,8 +2,13 @@
 
 namespace App\Services;
 
+use App\Mail\BookingCancelledMail;
+use App\Mail\BookingCompletedMail;
+use App\Mail\BookingConfirmedMail;
+use App\Mail\BookingPendingMail;
 use App\Models\Booking;
 use App\Models\Notification;
+use Illuminate\Support\Facades\Mail;
 
 class NotificationService
 {
@@ -24,7 +29,7 @@ class NotificationService
         $code      = $booking->booking_code;
         $date      = $booking->booking_date->format('d M Y');
 
-        // Notify user
+        // Notify user (DB)
         self::send(
             $booking->user_id,
             'booking_pending',
@@ -33,7 +38,7 @@ class NotificationService
             $booking->id,
         );
 
-        // Notify owner
+        // Notify owner (DB)
         self::send(
             $booking->field->owner_id,
             'booking_pending',
@@ -41,10 +46,14 @@ class NotificationService
             "Pemesanan baru untuk lapangan {$fieldName} pada {$date} dengan kode {$code}. Harap segera dikonfirmasi.",
             $booking->id,
         );
+
+        // Send email to user
+        Mail::to($booking->user->email)->send(new BookingPendingMail($booking));
     }
 
     public static function bookingConfirmed(Booking $booking): void
     {
+        // Notify user (DB)
         self::send(
             $booking->user_id,
             'booking_confirmed',
@@ -52,6 +61,9 @@ class NotificationService
             "Pemesanan Anda (kode: {$booking->booking_code}) untuk lapangan {$booking->field->name} telah dikonfirmasi.",
             $booking->id,
         );
+
+        // Send email to user
+        Mail::to($booking->user->email)->send(new BookingConfirmedMail($booking));
     }
 
     public static function bookingCancelled(Booking $booking, string $cancelledBy = 'user'): void
@@ -59,6 +71,7 @@ class NotificationService
         $fieldName = $booking->field->name;
         $code      = $booking->booking_code;
 
+        // Notify user (DB)
         self::send(
             $booking->user_id,
             'booking_cancelled',
@@ -76,10 +89,14 @@ class NotificationService
                 $booking->id,
             );
         }
+
+        // Send email to user
+        Mail::to($booking->user->email)->send(new BookingCancelledMail($booking));
     }
 
     public static function bookingCompleted(Booking $booking): void
     {
+        // Notify user (DB)
         self::send(
             $booking->user_id,
             'booking_completed',
@@ -87,5 +104,8 @@ class NotificationService
             "Pemesanan Anda (kode: {$booking->booking_code}) untuk lapangan {$booking->field->name} telah selesai. Terima kasih!",
             $booking->id,
         );
+
+        // Send email to user
+        Mail::to($booking->user->email)->send(new BookingCompletedMail($booking));
     }
 }

@@ -70,4 +70,9 @@ class Booking extends Model
     {
         return $this->status === 'cancelled';
     }
+
+    public function isCompleted(): bool
+    {
+        return $this->status === 'completed';
+    }
 }

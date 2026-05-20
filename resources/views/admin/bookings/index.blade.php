@@ -32,12 +32,12 @@
                 <table class="w-full text-sm">
                     <thead>
                         <tr class="border-b border-field bg-accent">
-                            <th class="text-left px-5 py-3 label">Kode</th>
-                            <th class="text-left px-5 py-3 label">Pengguna</th>
-                            <th class="text-left px-5 py-3 label">Lapangan</th>
-                            <th class="text-left px-5 py-3 label hidden md:table-cell">Tanggal</th>
-                            <th class="text-left px-5 py-3 label hidden sm:table-cell">Total</th>
-                            <th class="text-left px-5 py-3 label">Status</th>
+                            <th class="text-left px-5 py-3 ">Kode</th>
+                            <th class="text-left px-5 py-3 ">Pengguna</th>
+                            <th class="text-left px-5 py-3 ">Lapangan</th>
+                            <th class="text-left px-5 py-3  hidden md:table-cell">Tanggal</th>
+                            <th class="text-left px-5 py-3  hidden sm:table-cell">Total</th>
+                            <th class="text-left px-5 py-3 ">Status</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-field">

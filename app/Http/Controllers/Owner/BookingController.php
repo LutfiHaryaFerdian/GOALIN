@@ -75,6 +75,24 @@ class BookingController extends Controller
         return redirect()->back()->with('success', "Pemesanan {$booking->booking_code} berhasil dibatalkan.");
     }
 
+    public function complete(Booking $booking)
+    {
+        $this->authorizeOwner($booking);
+
+        if (!$booking->isConfirmed()) {
+            return redirect()->back()->with('error', 'Hanya pemesanan yang sudah dikonfirmasi yang dapat diselesaikan.');
+        }
+
+        $booking->update([
+            'status'       => 'completed',
+        ]);
+
+        $booking->load(['field.location', 'user']);
+        NotificationService::bookingCompleted($booking);
+
+        return redirect()->back()->with('success', "Pemesanan {$booking->booking_code} ditandai selesai.");
+    }
+
     private function authorizeOwner(Booking $booking): void
     {
         $fieldIds = Field::where('owner_id', Auth::id())->pluck('id');

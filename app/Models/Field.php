@@ -22,7 +22,7 @@ class Field extends Model
 
     protected $casts = [
         'facilities' => 'array',
-        'images'     => 'array',
+        'images' => 'array',
         'price_per_hour' => 'decimal:2',
     ];
 

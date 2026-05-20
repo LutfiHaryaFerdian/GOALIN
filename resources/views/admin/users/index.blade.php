@@ -12,7 +12,8 @@
 
             {{-- Filters --}}
             <form method="GET" class="flex flex-wrap gap-3 mb-6">
-                <div class="flex items-center gap-2 border border-gray-200 rounded-lg px-3 py-2 focus-within:ring-2 focus-within:ring-primary flex-1 min-w-48 bg-white">
+                <div
+                    class="flex items-center gap-2 border border-gray-200 rounded-lg px-3 py-2 focus-within:ring-2 focus-within:ring-primary flex-1 min-w-48 bg-white">
                     <x-icon name="search" class="w-4 h-4 text-gray-400 shrink-0" />
                     <input type="text" name="search" value="{{ request('search') }}"
                         placeholder="Cari nama atau email..."
@@ -21,7 +22,7 @@
                 <select name="role"
                     class="border border-gray-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-primary focus:border-transparent outline-none bg-white">
                     <option value="">Semua Role</option>
-                    <option value="user"  {{ request('role') === 'user'  ? 'selected' : '' }}>User</option>
+                    <option value="user" {{ request('role') === 'user' ? 'selected' : '' }}>User</option>
                     <option value="owner" {{ request('role') === 'owner' ? 'selected' : '' }}>Owner</option>
                     <option value="admin" {{ request('role') === 'admin' ? 'selected' : '' }}>Admin</option>
                 </select>
@@ -35,19 +36,19 @@
                 <table class="w-full text-sm">
                     <thead>
                         <tr class="border-b border-field bg-accent">
-                            <th class="text-left px-5 py-3 label">Pengguna</th>
-                            <th class="text-left px-5 py-3 label">Email</th>
-                            <th class="text-left px-5 py-3 label hidden md:table-cell">Telepon</th>
-                            <th class="text-left px-5 py-3 label">Role</th>
-                            <th class="text-left px-5 py-3 label hidden sm:table-cell">Bergabung</th>
-                            <th class="text-left px-5 py-3 label">Aksi</th>
+                            <th class="text-left px-5 py-3 ">Pengguna</th>
+                            <th class="text-left px-5 py-3 ">Email</th>
+                            <th class="text-left px-5 py-3  hidden md:table-cell">Telepon</th>
+                            <th class="text-left px-5 py-3 ">Role</th>
+                            <th class="text-left px-5 py-3  hidden sm:table-cell">Bergabung</th>
+                            <th class="text-left px-5 py-3 ">Aksi</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-field">
-                        @foreach($users as $user)
+                        @foreach ($users as $user)
                             @php
                                 $roleColors = [
-                                    'user'  => 'bg-gray-100 text-gray-600',
+                                    'user' => 'bg-gray-100 text-gray-600',
                                     'owner' => 'bg-blue-50 text-blue-600',
                                     'admin' => 'bg-primary-light text-primary',
                                 ];
@@ -55,16 +56,19 @@
                             <tr class="hover:bg-accent transition-colors">
                                 <td class="px-5 py-3">
                                     <div class="flex items-center gap-2.5">
-                                        <div class="w-8 h-8 rounded-lg bg-primary-light flex items-center justify-center text-xs font-bold text-primary shrink-0">
+                                        <div
+                                            class="w-8 h-8 rounded-lg bg-primary-light flex items-center justify-center text-xs font-bold text-primary shrink-0">
                                             {{ strtoupper(substr($user->name, 0, 1)) }}
                                         </div>
                                         <span class="font-semibold text-gray-900 text-xs">{{ $user->name }}</span>
                                     </div>
                                 </td>
                                 <td class="px-5 py-3 text-xs text-gray-500">{{ $user->email }}</td>
-                                <td class="px-5 py-3 text-xs text-gray-400 hidden md:table-cell">{{ $user->phone ?? '—' }}</td>
+                                <td class="px-5 py-3 text-xs text-gray-400 hidden md:table-cell">
+                                    {{ $user->phone ?? '—' }}</td>
                                 <td class="px-5 py-3">
-                                    <span class="rounded-full px-2.5 py-0.5 text-xs font-semibold {{ $roleColors[$user->role] ?? '' }}">
+                                    <span
+                                        class="rounded-full px-2.5 py-0.5 text-xs font-semibold {{ $roleColors[$user->role] ?? '' }}">
                                         {{ ucfirst($user->role) }}
                                     </span>
                                 </td>
@@ -74,12 +78,13 @@
                                 <td class="px-5 py-3">
                                     <div class="flex items-center gap-1.5">
                                         <a href="{{ route('admin.users.edit', $user) }}"
-                                           class="p-1.5 rounded-lg hover:bg-primary-light text-gray-400 hover:text-primary transition-colors">
+                                            class="p-1.5 rounded-lg hover:bg-primary-light text-gray-400 hover:text-primary transition-colors">
                                             <x-icon name="pencil" class="w-4 h-4" />
                                         </a>
-                                        @if($user->id !== auth()->id())
+                                        @if ($user->id !== auth()->id())
                                             <form method="POST" action="{{ route('admin.users.destroy', $user) }}"
-                                                  x-data x-on:submit.prevent="if(confirm('Hapus pengguna ini?')) $el.submit()">
+                                                x-data
+                                                x-on:submit.prevent="if(confirm('Hapus pengguna ini?')) $el.submit()">
                                                 @csrf @method('DELETE')
                                                 <button type="submit"
                                                     class="p-1.5 rounded-lg hover:bg-red-50 text-gray-400 hover:text-red-500 transition-colors">

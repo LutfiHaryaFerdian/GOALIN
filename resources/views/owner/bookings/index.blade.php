@@ -32,16 +32,16 @@
                 </div>
             @else
                 <div class="card overflow-hidden">
-                    <table class="w-full text-sm">
+                    <table class="w-full text-sm ">
                         <thead>
                             <tr class="border-b border-field bg-accent">
-                                <th class="text-left px-5 py-3 label">Kode</th>
-                                <th class="text-left px-5 py-3 label">Pemesan</th>
-                                <th class="text-left px-5 py-3 label">Lapangan</th>
-                                <th class="text-left px-5 py-3 label">Tanggal & Waktu</th>
-                                <th class="text-left px-5 py-3 label">Total</th>
-                                <th class="text-left px-5 py-3 label">Status</th>
-                                <th class="text-left px-5 py-3 label">Aksi</th>
+                                <th class="text-left px-5 py-3 ">Kode</th>
+                                <th class="text-left px-5 py-3 ">Pemesan</th>
+                                <th class="text-left px-5 py-3 ">Lapangan</th>
+                                <th class="text-left px-5 py-3 ">Tanggal & Waktu</th>
+                                <th class="text-left px-5 py-3 ">Total</th>
+                                <th class="text-left px-5 py-3 ">Status</th>
+                                <th class="text-left px-5 py-3 ">Aksi</th>
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-field">

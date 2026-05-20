@@ -78,6 +78,7 @@ Route::middleware(['auth', 'role:owner,admin'])->prefix('owner')->name('owner.')
     Route::get('/bookings', [Owner\BookingController::class, 'index'])->name('bookings.index');
     Route::patch('/bookings/{booking}/confirm', [Owner\BookingController::class, 'confirm'])->name('bookings.confirm');
     Route::patch('/bookings/{booking}/cancel', [Owner\BookingController::class, 'cancel'])->name('bookings.cancel');
+    Route::patch('/bookings/{booking}/complete', [Owner\BookingController::class, 'complete'])->name('bookings.complete');
 });
 
 /*
