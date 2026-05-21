@@ -57,7 +57,13 @@ class OtpVerificationController extends Controller
 
             Auth::login($user);
 
-            return redirect()->intended(route('dashboard'));
+            // Redirect berdasarkan role yang dipilih saat registrasi
+            $redirectTo = match ($user->role) {
+                'owner' => route('owner.dashboard'),
+                default => route('dashboard'),
+            };
+
+            return redirect()->intended($redirectTo);
         }
 
         $remaining = $this->otpService->getRemainingAttempts($data['email'], 'registration');
