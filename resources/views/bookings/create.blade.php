@@ -31,7 +31,10 @@
                 <div class="text-right shrink-0">
                     <p class="text-xs text-gray-400 mb-1">Total</p>
                     <p class="text-2xl font-extrabold text-primary">
-                        Rp {{ number_format($schedule->field->price_per_hour, 0, ',', '.') }}
+                        Rp {{ number_format($totalPrice, 0, ',', '.') }}
+                    </p>
+                    <p class="text-xs text-gray-400 mt-0.5">
+                        {{ $schedules->count() }} jam × Rp {{ number_format($schedule->field->price_per_hour, 0, ',', '.') }}
                     </p>
                 </div>
             </div>
@@ -47,10 +50,27 @@
                     <p class="label">Waktu</p>
                     <p class="text-sm font-semibold text-gray-900 flex items-center gap-1.5">
                         <x-icon name="clock" class="w-4 h-4 text-primary" />
-                        {{ substr($schedule->start_time, 0, 5) }} – {{ substr($schedule->end_time, 0, 5) }} WIB
+                        {{ substr($schedules->first()->start_time, 0, 5) }}
+                        –
+                        {{ substr($schedules->last()->end_time, 0, 5) }} WIB
                     </p>
                 </div>
             </div>
+
+            {{-- Slot timeline (multi-slot) --}}
+            @if($schedules->count() > 1)
+                <div class="mt-4 pt-4 border-t border-field">
+                    <p class="label mb-3">Slot yang Dipesan ({{ $schedules->count() }} jam)</p>
+                    <div class="flex flex-wrap gap-2">
+                        @foreach($schedules as $s)
+                            <span class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-primary-light text-primary rounded-lg text-xs font-semibold">
+                                <x-icon name="clock" class="w-3.5 h-3.5" />
+                                {{ substr($s->start_time, 0, 5) }} – {{ substr($s->end_time, 0, 5) }}
+                            </span>
+                        @endforeach
+                    </div>
+                </div>
+            @endif
         </div>
 
         {{-- Pemesan info --}}
@@ -77,7 +97,10 @@
         {{-- Form --}}
         <form method="POST" action="{{ route('bookings.store') }}" class="card p-6">
             @csrf
-            <input type="hidden" name="schedule_id" value="{{ $schedule->id }}">
+            {{-- Submit all selected schedule IDs --}}
+            @foreach($schedules as $s)
+                <input type="hidden" name="schedule_ids[]" value="{{ $s->id }}">
+            @endforeach
 
             <div class="mb-6">
                 <label for="notes" class="label">Catatan Tambahan <span class="text-gray-300 normal-case font-normal">(opsional)</span></label>

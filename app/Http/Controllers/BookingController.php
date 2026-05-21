@@ -26,63 +26,98 @@ class BookingController extends Controller
     }
 
     /**
-     * Show booking form for a specific schedule.
+     * Show booking confirmation for one or more consecutive schedules.
      */
     public function create(Request $request)
     {
-        $schedule = FieldSchedule::with('field.location')->findOrFail($request->schedule_id);
+        $ids = $request->input('schedule_ids', []);
 
-        if (!$schedule->isAvailable()) {
-            return redirect()->back()->with('error', 'Slot ini sudah tidak tersedia. Silakan pilih slot lain.');
+        // Fallback: support legacy single schedule_id
+        if (empty($ids) && $request->filled('schedule_id')) {
+            $ids = [$request->schedule_id];
         }
 
-        return view('bookings.create', compact('schedule'));
+        if (empty($ids)) {
+            return redirect()->route('fields.index')->with('error', 'Pilih minimal satu slot terlebih dahulu.');
+        }
+
+        $schedules = FieldSchedule::with('field.location', 'field.category')
+            ->whereIn('id', $ids)
+            ->orderBy('start_time')
+            ->get();
+
+        if ($schedules->isEmpty()) {
+            return redirect()->back()->with('error', 'Slot tidak ditemukan.');
+        }
+
+        // All must be available
+        $unavailable = $schedules->filter(fn($s) => !$s->isAvailable());
+        if ($unavailable->isNotEmpty()) {
+            return redirect()->back()->with('error', 'Satu atau lebih slot sudah tidak tersedia. Silakan pilih ulang.');
+        }
+
+        $field      = $schedules->first()->field;
+        $totalPrice = $schedules->count() * $field->price_per_hour;
+        // Backward compat: $schedule = first slot (used by any partial view)
+        $schedule   = $schedules->first();
+
+        return view('bookings.create', compact('schedule', 'schedules', 'field', 'totalPrice'));
     }
 
     /**
-     * Store a new booking with double-booking protection.
+     * Store a new booking (supports 1-4 consecutive slots).
      */
     public function store(Request $request)
     {
         $request->validate([
-            'schedule_id' => ['required', 'exists:field_schedules,id'],
-            'notes'       => ['nullable', 'string', 'max:500'],
+            'schedule_ids'   => ['required', 'array', 'min:1', 'max:4'],
+            'schedule_ids.*' => ['required', 'exists:field_schedules,id'],
+            'notes'          => ['nullable', 'string', 'max:500'],
         ]);
 
         try {
             $booking = DB::transaction(function () use ($request) {
-                // Lock the schedule row to prevent race conditions
-                $schedule = FieldSchedule::lockForUpdate()->findOrFail($request->schedule_id);
+                // Lock all selected rows to prevent race conditions
+                $schedules = FieldSchedule::lockForUpdate()
+                    ->whereIn('id', $request->schedule_ids)
+                    ->orderBy('start_time')
+                    ->get();
 
-                if (!$schedule->isAvailable()) {
-                    throw new \Exception('Slot ini sudah dipesan oleh orang lain. Silakan pilih slot lain.');
+                if ($schedules->count() !== count($request->schedule_ids)) {
+                    throw new \Exception('Satu atau lebih slot tidak ditemukan.');
                 }
 
-                $field = Field::findOrFail($schedule->field_id);
+                // All must be available
+                foreach ($schedules as $s) {
+                    if (!$s->isAvailable()) {
+                        throw new \Exception("Slot {$s->start_time} sudah dipesan. Silakan pilih slot lain.");
+                    }
+                }
 
-                // Calculate total price (1 hour per slot)
-                $totalPrice = $field->price_per_hour;
+                $first = $schedules->first();
+                $last  = $schedules->last();
+                $field = Field::findOrFail($first->field_id);
 
                 $booking = Booking::create([
-                    'user_id'      => Auth::id(),
-                    'field_id'     => $field->id,
-                    'schedule_id'  => $schedule->id,
-                    'booking_date' => $schedule->schedule_date,
-                    'start_time'   => $schedule->start_time,
-                    'end_time'     => $schedule->end_time,
-                    'total_price'  => $totalPrice,
-                    'notes'        => $request->notes,
-                    'status'       => 'pending',
+                    'user_id'        => Auth::id(),
+                    'field_id'       => $field->id,
+                    'schedule_id'    => $first->id,   // FK to first slot (backward compat)
+                    'booking_date'   => $first->schedule_date,
+                    'start_time'     => $first->start_time,
+                    'end_time'       => $last->end_time,
+                    'total_price'    => $schedules->count() * $field->price_per_hour,
+                    'notes'          => $request->notes,
+                    'status'         => 'pending',
                     'payment_status' => 'unpaid',
                 ]);
 
-                // Mark schedule as booked
-                $schedule->update(['status' => 'booked']);
+                // Mark every selected slot as booked
+                FieldSchedule::whereIn('id', $request->schedule_ids)
+                    ->update(['status' => 'booked']);
 
                 return $booking;
             });
 
-            // Send notifications (outside transaction to avoid locks)
             $booking->load(['field.owner', 'field.location']);
             NotificationService::bookingPending($booking);
 
@@ -132,8 +167,13 @@ class BookingController extends Controller
                 'cancelled_at'        => now(),
             ]);
 
-            // Revert schedule to available
-            $booking->schedule->update(['status' => 'available']);
+            // Revert ALL schedules in the booking's time window back to available
+            FieldSchedule::where('field_id', $booking->field_id)
+                ->where('schedule_date', $booking->booking_date)
+                ->where('start_time', '>=', $booking->start_time)
+                ->where('end_time', '<=', $booking->end_time)
+                ->where('status', 'booked')
+                ->update(['status' => 'available']);
         });
 
         $booking->load(['field.owner', 'field.location']);
