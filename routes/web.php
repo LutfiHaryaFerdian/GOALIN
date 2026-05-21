@@ -5,6 +5,7 @@ use App\Http\Controllers\BookingController;
 use App\Http\Controllers\FieldController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\Owner;
+use App\Http\Controllers\Auth\PasswordChangeController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 
@@ -42,6 +43,14 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+
+    // OTP Ganti Password
+    Route::post('/profile/password/request-otp', [PasswordChangeController::class, 'requestOtp'])->name('password.change.request');
+    Route::get('/profile/password/verify', [PasswordChangeController::class, 'showVerifyForm'])->name('password.change.verify');
+    Route::post('/profile/password/verify', [PasswordChangeController::class, 'verifyOtp'])->name('password.change.verify.submit')->middleware('throttle:5,1');
+    Route::post('/profile/password/resend-otp', [PasswordChangeController::class, 'resendOtp'])->name('password.change.resend-otp')->middleware('throttle:3,5');
+    Route::get('/profile/password/change', [PasswordChangeController::class, 'showChangeForm'])->name('password.change.form');
+    Route::post('/profile/password/change', [PasswordChangeController::class, 'update'])->name('password.change.update');
 
     // Bookings (user-facing)
     Route::get('/bookings', [BookingController::class, 'index'])->name('bookings.index');

@@ -69,5 +69,36 @@
                 Simpan Perubahan
             </button>
         </form>
+
+        {{-- Flash messages --}}
+        @if (session('success'))
+            <div class="mt-4 text-sm text-primary bg-primary-light px-4 py-3 rounded-lg flex items-center gap-2">
+                <x-icon name="check" class="w-4 h-4 flex-shrink-0" />
+                {{ session('success') }}
+            </div>
+        @endif
+
+        {{-- Keamanan Akun --}}
+        <div class="card p-6 mt-6 space-y-4">
+            <h2 class="text-base font-bold text-gray-900">Keamanan Akun</h2>
+            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 p-4 rounded-xl bg-gray-50 border border-field">
+                <div>
+                    <p class="text-sm font-semibold text-gray-800">Password</p>
+                    <p class="text-xs text-gray-500 mt-0.5">
+                        Kamu akan menerima kode verifikasi ke email sebelum bisa mengubah password.
+                    </p>
+                </div>
+                <form method="POST" action="{{ route('password.change.request') }}" class="flex-shrink-0">
+                    @csrf
+                    <button
+                        type="submit"
+                        class="btn-primary py-2 px-4 text-sm whitespace-nowrap"
+                    >
+                        <x-icon name="lock" class="w-4 h-4" />
+                        Ganti Password
+                    </button>
+                </form>
+            </div>
+        </div>
     </div>
 </x-app-layout>
