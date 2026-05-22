@@ -42,7 +42,8 @@
                     </thead>
                     <tbody class="divide-y divide-field">
                         @forelse($bookings as $booking)
-                            <tr class="hover:bg-accent transition-colors">
+                            <tr class="hover:bg-accent transition-colors cursor-pointer"
+                                onclick="window.location='{{ route('admin.bookings.show', $booking) }}'">
                                 <td class="px-5 py-3 font-mono text-xs text-gray-400">{{ $booking->booking_code }}</td>
                                 <td class="px-5 py-3 text-xs font-semibold text-gray-900">{{ $booking->user->name }}</td>
                                 <td class="px-5 py-3 text-xs text-gray-600">{{ $booking->field->name }}</td>
@@ -53,7 +54,12 @@
                                     Rp {{ number_format($booking->total_price, 0, ',', '.') }}
                                 </td>
                                 <td class="px-5 py-3">
-                                    <x-status-badge :status="$booking->status" />
+                                    <div class="flex items-center gap-2">
+                                        <x-status-badge :status="$booking->status" />
+                                        @if($booking->payment_status === 'paid')
+                                            <span class="hidden lg:inline-flex items-center rounded-full bg-green-100 px-2 py-0.5 text-xs font-semibold text-green-700">Lunas</span>
+                                        @endif
+                                    </div>
                                 </td>
                             </tr>
                         @empty

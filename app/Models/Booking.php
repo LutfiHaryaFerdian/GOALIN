@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Str;
 
 class Booking extends Model
@@ -12,6 +13,10 @@ class Booking extends Model
         'field_id',
         'schedule_id',
         'booking_code',
+        'midtrans_order_id',
+        'midtrans_snap_token',
+        'midtrans_transaction_id',
+        'midtrans_payment_type',
         'booking_date',
         'start_time',
         'end_time',
@@ -74,5 +79,10 @@ class Booking extends Model
     public function isCompleted(): bool
     {
         return $this->status === 'completed';
+    }
+
+    public function paymentLogs(): HasMany
+    {
+        return $this->hasMany(PaymentLog::class);
     }
 }

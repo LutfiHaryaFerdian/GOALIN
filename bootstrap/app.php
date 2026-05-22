@@ -15,6 +15,14 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->alias([
             'role' => RoleMiddleware::class,
         ]);
+
+        // Trust semua proxy — diperlukan saat akses via ngrok
+        $middleware->trustProxies(at: '*');
+
+        // Kecualikan webhook Midtrans dari CSRF protection
+        $middleware->validateCsrfTokens(except: [
+            'payment/notification',
+        ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         //

@@ -28,7 +28,7 @@ class BookingController extends Controller
 
     public function show(Booking $booking)
     {
-        $booking->load(['user', 'field.location', 'field.category', 'field.owner', 'schedule']);
+        $booking->load(['user', 'field.location', 'field.category', 'field.owner', 'schedule', 'paymentLogs']);
 
         return view('admin.bookings.show', compact('booking'));
     }

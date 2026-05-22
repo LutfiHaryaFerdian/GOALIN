@@ -10,6 +10,11 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+    {{-- Midtrans Snap.js --}}
+    <script
+        src="{{ config('midtrans.snap_url') }}"
+        data-client-key="{{ config('midtrans.client_key') }}">
+    </script>
 </head>
 <body class="h-full bg-accent font-sans antialiased">
 
@@ -151,6 +156,15 @@
          class="fixed top-20 right-4 z-50 flex items-center gap-3 bg-white border-l-4 border-red-500 text-gray-800 px-4 py-3 rounded-xl shadow-lg max-w-sm text-sm">
         <x-icon name="x-circle" class="w-5 h-5 text-red-500 shrink-0" />
         <span>{{ session('error') }}</span>
+        <button @click="show=false" class="ml-auto text-gray-400 hover:text-gray-600"><x-icon name="x-mark" class="w-4 h-4" /></button>
+    </div>
+@endif
+@if(session('info'))
+    <div x-data="{ show: true }" x-show="show" x-init="setTimeout(() => show = false, 5000)"
+         x-transition:leave="transition ease-in duration-200" x-transition:leave-end="opacity-0 -translate-y-2"
+         class="fixed top-20 right-4 z-50 flex items-center gap-3 bg-white border-l-4 border-blue-500 text-gray-800 px-4 py-3 rounded-xl shadow-lg max-w-sm text-sm">
+        <x-icon name="bell" class="w-5 h-5 text-blue-500 shrink-0" />
+        <span>{{ session('info') }}</span>
         <button @click="show=false" class="ml-auto text-gray-400 hover:text-gray-600"><x-icon name="x-mark" class="w-4 h-4" /></button>
     </div>
 @endif

@@ -6,6 +6,7 @@ use App\Http\Controllers\FieldController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\Owner;
 use App\Http\Controllers\Auth\PasswordChangeController;
+use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 
@@ -59,11 +60,18 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/bookings/{booking}', [BookingController::class, 'show'])->name('bookings.show');
     Route::patch('/bookings/{booking}/cancel', [BookingController::class, 'cancel'])->name('bookings.cancel');
 
+    // Payment — generate snap token & finish redirect
+    Route::post('/payment/{booking}/snap-token', [PaymentController::class, 'getSnapToken'])->name('payment.snap-token');
+    Route::get('/payment/finish', [PaymentController::class, 'finish'])->name('payment.finish');
+
     // Notifications
     Route::get('/notifications', [NotificationController::class, 'index'])->name('notifications.index');
     Route::patch('/notifications/{notification}/read', [NotificationController::class, 'markRead'])->name('notifications.read');
     Route::patch('/notifications/read-all', [NotificationController::class, 'markAllRead'])->name('notifications.read-all');
 });
+
+// Midtrans webhook — TANPA auth, TANPA CSRF (dikecualikan di bootstrap/app.php)
+Route::post('/payment/notification', [PaymentController::class, 'notification'])->name('payment.notification');
 
 /*
 |--------------------------------------------------------------------------
