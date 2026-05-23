@@ -215,6 +215,57 @@
                         },
                         submitBooking() {
                             if (this.selectedSlots.length) this.$refs.bookingForm.submit();
+                        },
+
+                        // ── Real-time slot polling ──────────────────────────────────────────
+                        _pollTimer: null,
+                        _pollUrl: null,
+                        _pollDates: null,
+                        _lastPollAt: null,
+                        slotUpdated: false,
+
+                        initPolling(url, dates) {
+                            this._pollUrl   = url;
+                            this._pollDates = dates;
+                            this._schedulePoll();
+                        },
+                        _schedulePoll() {
+                            this._pollTimer = setInterval(() => this._doPoll(), 30000);
+                        },
+                        async _doPoll() {
+                            try {
+                                const params = this._pollDates.map(d => `dates[]=${d}`).join('&');
+                                const res    = await fetch(`${this._pollUrl}?${params}`, {
+                                    headers: { 'Accept': 'application/json', 'X-Requested-With': 'XMLHttpRequest' }
+                                });
+                                if (!res.ok) return;
+                                const data = await res.json();
+                                this._applySlotUpdate(data.slots || {});
+                                this._lastPollAt = new Date();
+                            } catch (e) { /* silent fail — network issues shouldn't break UX */ }
+                        },
+                        _applySlotUpdate(fresh) {
+                            let changed = false;
+                            // Patch status in allSlots without replacing the whole object
+                            for (const date in this.allSlots) {
+                                this.allSlots[date].forEach(slot => {
+                                    if (fresh[slot.id] !== undefined && fresh[slot.id] !== slot.status) {
+                                        slot.status = fresh[slot.id];
+                                        changed = true;
+                                        // If user had this slot selected and it's now booked/closed, deselect it
+                                        if (slot.status !== 'available') {
+                                            this.selectedSlots = this.selectedSlots.filter(s => s.id !== slot.id);
+                                        }
+                                    }
+                                });
+                            }
+                            if (changed) {
+                                this.slotUpdated = true;
+                                setTimeout(() => { this.slotUpdated = false; }, 4000);
+                            }
+                        },
+                        destroyPolling() {
+                            if (this._pollTimer) clearInterval(this._pollTimer);
                         }
                     };
                 };
@@ -227,12 +278,27 @@
                          '{{ $dates[0] }}',
                          {{ auth()->check() ? 'true' : 'false' }},
                          '{{ route('login') }}'
-                     )">
-                    <div class="flex items-center justify-between mb-4">
+                     )"
+                     x-init="initPolling('{{ route('fields.slot-status', $field->slug) }}', {{ Js::from($dates) }})"
+                     @destroy="destroyPolling()">
+                    <div class="flex items-center justify-between mb-1">
                         <h2 class="font-bold text-gray-900">Pilih Jadwal</h2>
-                        <span class="text-sm font-bold text-primary">
-                            Rp {{ number_format($field->price_per_hour, 0, ',', '.') }}<span class="text-gray-400 font-normal">/jam</span>
-                        </span>
+                        <div class="flex items-center gap-2">
+                            {{-- Live indicator --}}
+                            <span class="flex items-center gap-1 text-[10px] text-emerald-600 font-medium">
+                                <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse inline-block"></span>
+                                Live
+                            </span>
+                            <span class="text-sm font-bold text-primary">
+                                Rp {{ number_format($field->price_per_hour, 0, ',', '.') }}<span class="text-gray-400 font-normal">/jam</span>
+                            </span>
+                        </div>
+                    </div>
+
+                    {{-- Slot-updated toast --}}
+                    <div x-show="slotUpdated" x-transition
+                         class="mb-3 p-2 bg-amber-50 border border-amber-200 rounded-xl text-xs text-amber-700 text-center">
+                        &#8635; Ketersediaan slot telah diperbarui
                     </div>
 
                     {{-- Date tabs --}}

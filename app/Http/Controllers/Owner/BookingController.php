@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Owner;
 
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\FieldController;
 use App\Models\Booking;
 use App\Models\Field;
 use App\Services\NotificationService;
@@ -17,6 +18,9 @@ class BookingController extends Controller
         $fieldIds = Field::where('owner_id', Auth::id())->pluck('id');
 
         $query = Booking::whereIn('field_id', $fieldIds)
+            ->select(['id', 'user_id', 'field_id', 'schedule_id', 'booking_code',
+                      'booking_date', 'start_time', 'end_time', 'total_price',
+                      'status', 'payment_status', 'created_at'])
             ->with(['user', 'field', 'schedule']);
 
         if ($request->filled('status')) {
@@ -59,6 +63,8 @@ class BookingController extends Controller
             'cancellation_reason' => ['required', 'string', 'max:255'],
         ]);
 
+        $fieldId = $booking->field_id;
+
         DB::transaction(function () use ($booking, $request) {
             $booking->update([
                 'status'              => 'cancelled',
@@ -71,6 +77,9 @@ class BookingController extends Controller
 
         $booking->load(['field', 'user']);
         NotificationService::bookingCancelled($booking, 'owner');
+
+        // Invalidate schedule cache so users see the freed slot immediately
+        FieldController::forgetScheduleCache($fieldId);
 
         return redirect()->back()->with('success', "Pemesanan {$booking->booking_code} berhasil dibatalkan.");
     }

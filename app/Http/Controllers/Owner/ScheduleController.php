@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Owner;
 
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\FieldController;
 use App\Models\Field;
 use App\Models\FieldSchedule;
 use Carbon\Carbon;
@@ -21,6 +22,7 @@ class ScheduleController extends Controller
         }
 
         $schedules = $field->schedules()
+            ->select(['id', 'field_id', 'schedule_date', 'start_time', 'end_time', 'status', 'notes'])
             ->whereIn('schedule_date', $dates)
             ->orderBy('schedule_date')
             ->orderBy('start_time')
@@ -51,6 +53,9 @@ class ScheduleController extends Controller
             'notes'    => $request->notes,
         ]);
 
+        // Invalidate cached schedules for this field so public page reflects new slot
+        FieldController::forgetScheduleCache($field->id);
+
         return redirect()->back()->with('success', 'Slot jadwal berhasil ditambahkan.');
     }
 
@@ -71,6 +76,9 @@ class ScheduleController extends Controller
             'status' => $request->status,
             'notes'  => $request->notes,
         ]);
+
+        // Invalidate cached schedules so users see the closed slot immediately
+        FieldController::forgetScheduleCache($schedule->field_id);
 
         return redirect()->back()->with('success', 'Status slot berhasil diperbarui.');
     }

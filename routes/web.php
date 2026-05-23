@@ -22,6 +22,9 @@ Route::get('/', function () {
 
 Route::get('/fields', [FieldController::class, 'index'])->name('fields.index');
 Route::get('/fields/{slug}', [FieldController::class, 'show'])->name('fields.show');
+// Lightweight JSON polling endpoint — no auth required, cached 60s server-side
+Route::get('/fields/{slug}/slot-status', [FieldController::class, 'slotStatus'])->name('fields.slot-status');
+
 
 /*
 |--------------------------------------------------------------------------

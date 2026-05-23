@@ -18,6 +18,9 @@ class BookingController extends Controller
     public function index()
     {
         $bookings = Auth::user()->bookings()
+            ->select(['id', 'user_id', 'field_id', 'schedule_id', 'booking_code',
+                      'booking_date', 'start_time', 'end_time', 'total_price',
+                      'status', 'payment_status', 'created_at'])
             ->with(['field.location', 'field.category', 'schedule'])
             ->latest()
             ->paginate(10);
@@ -121,6 +124,9 @@ class BookingController extends Controller
             $booking->load(['field.owner', 'field.location']);
             NotificationService::bookingPending($booking);
 
+            // Invalidate schedule cache so other users see updated slot status
+            FieldController::forgetScheduleCache($booking->field_id);
+
             return redirect()->route('bookings.show', $booking)
                 ->with('success', "Pemesanan berhasil! Kode booking Anda: {$booking->booking_code}");
         } catch (\Exception $e) {
@@ -160,6 +166,8 @@ class BookingController extends Controller
             'cancellation_reason' => ['nullable', 'string', 'max:255'],
         ]);
 
+        $fieldId = $booking->field_id;
+
         DB::transaction(function () use ($booking, $request) {
             $booking->update([
                 'status'              => 'cancelled',
@@ -178,6 +186,9 @@ class BookingController extends Controller
 
         $booking->load(['field.owner', 'field.location']);
         NotificationService::bookingCancelled($booking, 'user');
+
+        // Invalidate schedule cache so slots appear as available again
+        FieldController::forgetScheduleCache($fieldId);
 
         return redirect()->route('bookings.index')
             ->with('success', 'Pemesanan berhasil dibatalkan.');

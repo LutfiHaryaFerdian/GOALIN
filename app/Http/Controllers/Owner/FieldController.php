@@ -8,6 +8,7 @@ use App\Models\FieldCategory;
 use App\Models\Location;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Str;
 
 class FieldController extends Controller
@@ -58,6 +59,10 @@ class FieldController extends Controller
 
         Field::create($data);
 
+        // Invalidate dropdown caches so new field appears in filters
+        Cache::forget('fieldcategories.active');
+        Cache::forget('locations.active.cities');
+
         return redirect()->route('owner.fields.index')
             ->with('success', 'Lapangan berhasil ditambahkan.');
     }
@@ -97,6 +102,10 @@ class FieldController extends Controller
         }
 
         $field->update($data);
+
+        // Invalidate dropdown and schedule caches
+        Cache::forget('fieldcategories.active');
+        Cache::forget('locations.active.cities');
 
         return redirect()->route('owner.fields.index')
             ->with('success', 'Lapangan berhasil diperbarui.');
