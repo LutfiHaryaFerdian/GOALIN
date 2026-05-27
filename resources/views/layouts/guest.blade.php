@@ -7,50 +7,30 @@
     <title>{{ config('app.name', 'GOALIN') }}@isset($title) — {{ $title }}@endisset</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800;900&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
-<body class="h-full bg-white font-sans antialiased">
+<body class="min-h-full bg-[#f8f8f6] font-sans antialiased">
 
-<div class="min-h-screen flex">
+{{-- Back link --}}
+<div class="absolute top-0 left-0 right-0 z-10 flex items-center justify-between px-6 pt-6">
+    <a href="{{ route('landing') }}" class="flex items-center gap-1">
+        <span class="font-display text-lg font-bold uppercase tracking-tight text-[#0a0a0a]">GOALIN</span>
+        <span class="w-1.5 h-1.5 rounded-full bg-[#16a34a] mb-2"></span>
+    </a>
+    <a href="{{ route('landing') }}" class="flex items-center gap-1.5 text-xs text-[#737373] hover:text-[#0a0a0a] transition-colors">
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke-width="1.75" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18"/>
+        </svg>
+        Beranda
+    </a>
+</div>
 
-    {{-- Left panel — green brand side --}}
-    <div class="hidden lg:flex lg:w-5/12 xl:w-1/2 flex-col pitch-bg relative overflow-hidden">
-        {{-- Pitch line overlay --}}
-        <div class="absolute inset-0 bg-primary/40"></div>
-
-        {{-- Center circle decoration --}}
-        <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 border-2 border-white/15 rounded-full"></div>
-        <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-4 h-4 bg-white/20 rounded-full"></div>
-        {{-- Halfway line --}}
-        <div class="absolute top-0 bottom-0 left-1/2 w-px bg-white/10"></div>
-        {{-- Goal boxes --}}
-        <div class="absolute top-1/2 -translate-y-1/2 left-0 w-24 h-40 border-2 border-white/15 border-l-0"></div>
-        <div class="absolute top-1/2 -translate-y-1/2 right-0 w-24 h-40 border-2 border-white/15 border-r-0"></div>
-
-        {{-- Content --}}
-        <div class="relative z-10 flex flex-col h-full px-12 py-10">
-            <div class="mb-auto">
-                <x-logo variant="light" size="sm" />
-            </div>
-            <div class="mb-auto text-center">
-                <x-logo variant="light" size="lg" />
-                <p class="mt-6 text-white/70 text-lg font-medium leading-relaxed">
-                    Platform reservasi lapangan olahraga.<br>Temukan, pesan, dan bermain.
-                </p>
-            </div>
-            <p class="text-white/40 text-xs">&copy; {{ date('Y') }} GOALIN</p>
-        </div>
-    </div>
-
-    {{-- Right panel — form --}}
-    <div class="flex-1 flex flex-col justify-center py-12 px-6 sm:px-12 lg:px-16 xl:px-24">
-        {{-- Mobile logo --}}
-        <div class="lg:hidden mb-10 flex justify-center">
-            <x-logo variant="dark" size="sm" />
-        </div>
-
-        <div class="mx-auto w-full max-w-sm">
+{{-- Centered card --}}
+<div class="min-h-screen flex items-center justify-center py-24 px-4">
+    <div class="w-full max-w-md">
+        {{-- Card --}}
+        <div class="bg-white rounded-3xl border border-[#e5e5e5] p-8 md:p-10">
             {{ $slot }}
         </div>
     </div>

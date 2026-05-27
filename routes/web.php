@@ -3,6 +3,7 @@
 use App\Http\Controllers\Admin;
 use App\Http\Controllers\BookingController;
 use App\Http\Controllers\FieldController;
+use App\Http\Controllers\LandingController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\Owner;
 use App\Http\Controllers\Auth\PasswordChangeController;
@@ -16,9 +17,7 @@ use Illuminate\Support\Facades\Route;
 |--------------------------------------------------------------------------
 */
 
-Route::get('/', function () {
-    return redirect()->route('fields.index');
-});
+Route::get('/', [LandingController::class, 'index'])->name('landing');
 
 Route::get('/fields', [FieldController::class, 'index'])->name('fields.index');
 Route::get('/fields/{slug}', [FieldController::class, 'show'])->name('fields.show');

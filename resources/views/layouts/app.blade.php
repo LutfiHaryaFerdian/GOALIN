@@ -8,7 +8,7 @@
     <meta name="description" content="{{ $metaDescription ?? 'GOALIN — Pesan lapangan olahraga terbaik di kotamu.' }}">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800;900&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     {{-- Midtrans Snap.js --}}
     <script
@@ -16,126 +16,143 @@
         data-client-key="{{ config('midtrans.client_key') }}">
     </script>
 </head>
-<body class="h-full bg-accent font-sans antialiased">
+<body class="h-full bg-canvas font-sans antialiased">
 
 {{-- ═══════════════════════════════════════════════
-     NAVBAR
+     NAVBAR — white, sticky, border-b only
 ═══════════════════════════════════════════════ --}}
-<header class="fixed top-0 inset-x-0 z-50 bg-primary border-b border-primary-dark" x-data="{ mobileOpen: false }">
+<header class="sticky top-0 z-50 bg-white border-b border-[#e5e5e5]" x-data="{ mobileOpen: false }">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex h-16 items-center justify-between gap-6">
 
             {{-- Logo --}}
-            <a href="{{ route('fields.index') }}" class="shrink-0">
-                <x-logo variant="light" size="sm" />
+            <a href="{{ route('landing') }}" class="flex items-center gap-1 shrink-0">
+                <span class="font-display text-2xl font-bold uppercase tracking-tight text-[#0a0a0a]">GOALIN</span>
+                <span class="w-1.5 h-1.5 rounded-full bg-[#16a34a] mb-3"></span>
             </a>
 
             {{-- Desktop nav --}}
-            <nav class="hidden md:flex items-center gap-1">
+            <nav class="hidden md:flex items-center gap-8">
                 <a href="{{ route('fields.index') }}"
-                   class="px-3 py-2 text-sm font-medium text-white/80 hover:text-white transition-colors
-                          {{ request()->routeIs('fields.*') ? 'text-white border-b-2 border-white/60' : '' }}">
-                    Cari Lapangan
+                   class="text-sm font-medium transition-colors {{ request()->routeIs('fields.*') ? 'text-[#0a0a0a]' : 'text-[#737373] hover:text-[#0a0a0a]' }}">
+                    Lapangan
                 </a>
                 @auth
+                    <a href="{{ route('bookings.index') }}"
+                       class="text-sm font-medium transition-colors {{ request()->routeIs('bookings.*') ? 'text-[#0a0a0a]' : 'text-[#737373] hover:text-[#0a0a0a]' }}">
+                        Pemesanan
+                    </a>
                     @if(auth()->user()->isOwner())
                         <a href="{{ route('owner.dashboard') }}"
-                           class="px-3 py-2 text-sm font-medium text-white/80 hover:text-white transition-colors
-                                  {{ request()->routeIs('owner.*') ? 'text-white border-b-2 border-white/60' : '' }}">
-                            Dashboard Owner
+                           class="text-sm font-medium transition-colors {{ request()->routeIs('owner.*') ? 'text-[#0a0a0a]' : 'text-[#737373] hover:text-[#0a0a0a]' }}">
+                            Dashboard
                         </a>
                     @endif
                     @if(auth()->user()->isAdmin())
                         <a href="{{ route('admin.dashboard') }}"
-                           class="px-3 py-2 text-sm font-medium text-white/80 hover:text-white transition-colors
-                                  {{ request()->routeIs('admin.*') ? 'text-white border-b-2 border-white/60' : '' }}">
+                           class="text-sm font-medium transition-colors {{ request()->routeIs('admin.*') ? 'text-[#0a0a0a]' : 'text-[#737373] hover:text-[#0a0a0a]' }}">
                             Admin
                         </a>
                     @endif
-                    <a href="{{ route('bookings.index') }}"
-                       class="px-3 py-2 text-sm font-medium text-white/80 hover:text-white transition-colors
-                              {{ request()->routeIs('bookings.*') ? 'text-white border-b-2 border-white/60' : '' }}">
-                        Pemesanan Saya
-                    </a>
                 @endauth
             </nav>
 
             {{-- Right side --}}
             <div class="flex items-center gap-2">
                 @auth
-                    {{-- Bell --}}
+                    {{-- Bell icon --}}
                     @php $unread = \App\Models\Notification::where('user_id', auth()->id())->whereNull('read_at')->count(); @endphp
                     <a href="{{ route('notifications.index') }}"
-                       class="relative p-2 text-white/70 hover:text-white transition-colors rounded-lg hover:bg-white/10">
-                        <x-icon name="bell" class="w-5 h-5" />
+                       class="relative p-2 text-[#737373] hover:text-[#0a0a0a] transition-colors rounded-lg hover:bg-[#f5f5f5]">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke-width="1.75" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M14.857 17.082a23.848 23.848 0 0 0 5.454-1.31A8.967 8.967 0 0 1 18 9.75V9A6 6 0 0 0 6 9v.75a8.967 8.967 0 0 1-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 0 1-5.714 0m5.714 0a3 3 0 1 1-5.714 0"/>
+                        </svg>
                         @if($unread > 0)
-                            <span class="absolute top-1.5 right-1.5 w-2 h-2 bg-red-400 rounded-full ring-2 ring-primary"></span>
+                            <span class="absolute top-1 right-1 flex h-3.5 w-3.5 items-center justify-center rounded-full bg-[#16a34a] text-[9px] font-bold text-white">
+                                {{ $unread > 9 ? '9+' : $unread }}
+                            </span>
                         @endif
                     </a>
 
                     {{-- Avatar dropdown --}}
                     <div class="relative" x-data="{ open: false }">
                         <button @click="open = !open"
-                                class="flex items-center gap-2 py-1.5 pl-1.5 pr-3 rounded-lg hover:bg-white/10 transition-colors">
-                            <div class="w-7 h-7 rounded-lg bg-white/20 flex items-center justify-center text-white text-xs font-bold overflow-hidden">
-                                @if(auth()->user()->avatar)
-                                    <img src="{{ Storage::url(auth()->user()->avatar) }}" class="w-full h-full object-cover" alt="">
-                                @else
-                                    {{ strtoupper(substr(auth()->user()->name, 0, 1)) }}
-                                @endif
-                            </div>
-                            <span class="text-sm font-medium text-white hidden sm:block">{{ auth()->user()->name }}</span>
-                            <x-icon name="chevron-down" class="w-3.5 h-3.5 text-white/60" />
+                                class="flex items-center justify-center w-8 h-8 rounded-full bg-[#0a0a0a] text-white text-xs font-bold hover:bg-[#404040] transition-colors">
+                            @if(auth()->user()->avatar)
+                                <img src="{{ Storage::url(auth()->user()->avatar) }}" class="w-full h-full object-cover rounded-full" alt="">
+                            @else
+                                {{ strtoupper(substr(auth()->user()->name, 0, 1)) }}
+                            @endif
                         </button>
-                        <div x-show="open" @click.outside="open = false" x-transition:enter="transition ease-out duration-100"
-                             x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100"
-                             class="absolute right-0 mt-1 w-52 bg-white rounded-xl shadow-lg border border-field py-1 z-50">
-                            <a href="{{ route('profile.edit') }}" class="flex items-center gap-2.5 px-4 py-2.5 text-sm text-gray-700 hover:bg-accent transition-colors">
-                                <x-icon name="user" class="w-4 h-4 text-gray-400" /> Profil Saya
+                        <div x-show="open" @click.outside="open = false"
+                             x-transition:enter="transition ease-out duration-100"
+                             x-transition:enter-start="opacity-0 scale-95"
+                             x-transition:enter-end="opacity-100 scale-100"
+                             class="absolute right-0 mt-2 w-48 bg-white border border-[#e5e5e5] rounded-2xl shadow-lg py-1 z-50">
+                            <div class="px-4 py-2.5 border-b border-[#f5f5f5]">
+                                <p class="text-xs font-semibold text-[#0a0a0a] truncate">{{ auth()->user()->name }}</p>
+                                <p class="text-xs text-[#737373] truncate">{{ auth()->user()->email }}</p>
+                            </div>
+                            <a href="{{ route('profile.edit') }}" class="flex items-center gap-2.5 px-4 py-2.5 text-sm text-[#404040] hover:bg-[#f8f8f6] transition-colors">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke-width="1.75" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z"/>
+                                </svg>
+                                Profil Saya
                             </a>
-                            <div class="border-t border-gray-100 my-1"></div>
+                            <div class="border-t border-[#f5f5f5] my-1"></div>
                             <form method="POST" action="{{ route('logout') }}">
                                 @csrf
-                                <button class="w-full flex items-center gap-2.5 px-4 py-2.5 text-sm text-red-600 hover:bg-red-50 transition-colors text-left">
-                                    <x-icon name="logout" class="w-4 h-4" /> Keluar
+                                <button type="submit" class="w-full flex items-center gap-2.5 px-4 py-2.5 text-sm text-[#dc2626] hover:bg-red-50 transition-colors text-left">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke-width="1.75" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0 0 13.5 3h-6a2.25 2.25 0 0 0-2.25 2.25v13.5A2.25 2.25 0 0 0 7.5 21h6a2.25 2.25 0 0 0 2.25-2.25V15m3 0 3-3m0 0-3-3m3 3H9"/>
+                                    </svg>
+                                    Keluar
                                 </button>
                             </form>
                         </div>
                     </div>
                 @else
-                    <a href="{{ route('login') }}" class="text-sm font-medium text-white/80 hover:text-white px-3 py-2 transition-colors">Masuk</a>
-                    <a href="{{ route('register') }}" class="text-sm font-semibold bg-white text-primary px-4 py-2 rounded-lg hover:bg-primary-light transition-colors">Daftar</a>
+                    <a href="{{ route('login') }}" class="text-sm font-medium text-[#737373] hover:text-[#0a0a0a] transition-colors hidden sm:block">Masuk</a>
+                    <a href="{{ route('register') }}" class="btn-dark text-xs px-4 py-2">Daftar</a>
                 @endauth
 
-                {{-- Mobile toggle --}}
-                <button @click="mobileOpen = !mobileOpen" class="md:hidden p-2 text-white/70 hover:text-white rounded-lg hover:bg-white/10">
-                    <x-icon name="menu" class="w-5 h-5" x-show="!mobileOpen" />
-                    <x-icon name="x-mark" class="w-5 h-5" x-show="mobileOpen" x-cloak />
+                {{-- Mobile hamburger --}}
+                <button @click="mobileOpen = !mobileOpen"
+                        class="md:hidden p-2 text-[#737373] hover:text-[#0a0a0a] rounded-lg hover:bg-[#f5f5f5] transition-colors">
+                    <svg x-show="!mobileOpen" xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke-width="1.75" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5"/>
+                    </svg>
+                    <svg x-show="mobileOpen" x-cloak xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke-width="1.75" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12"/>
+                    </svg>
                 </button>
             </div>
         </div>
     </div>
 
     {{-- Mobile drawer --}}
-    <div x-show="mobileOpen" x-transition class="md:hidden border-t border-primary-dark bg-primary px-4 py-3 space-y-1">
-        <a href="{{ route('fields.index') }}" class="block px-3 py-2 text-sm font-medium text-white/80 hover:text-white rounded-lg hover:bg-white/10 transition-colors">Cari Lapangan</a>
+    <div x-show="mobileOpen" x-transition
+         class="md:hidden border-t border-[#e5e5e5] bg-white px-4 py-3 space-y-1">
+        <a href="{{ route('fields.index') }}" class="block px-3 py-2.5 text-sm font-medium text-[#404040] hover:text-[#0a0a0a] hover:bg-[#f5f5f5] rounded-xl transition-colors">
+            Lapangan
+        </a>
         @auth
-            <a href="{{ route('bookings.index') }}" class="block px-3 py-2 text-sm font-medium text-white/80 hover:text-white rounded-lg hover:bg-white/10 transition-colors">Pemesanan Saya</a>
-            <a href="{{ route('notifications.index') }}" class="block px-3 py-2 text-sm font-medium text-white/80 hover:text-white rounded-lg hover:bg-white/10 transition-colors">Notifikasi</a>
+            <a href="{{ route('bookings.index') }}" class="block px-3 py-2.5 text-sm font-medium text-[#404040] hover:text-[#0a0a0a] hover:bg-[#f5f5f5] rounded-xl transition-colors">Pemesanan</a>
+            <a href="{{ route('notifications.index') }}" class="block px-3 py-2.5 text-sm font-medium text-[#404040] hover:text-[#0a0a0a] hover:bg-[#f5f5f5] rounded-xl transition-colors">Notifikasi</a>
             @if(auth()->user()->isOwner())
-                <a href="{{ route('owner.dashboard') }}" class="block px-3 py-2 text-sm font-medium text-white/80 hover:text-white rounded-lg hover:bg-white/10 transition-colors">Dashboard Owner</a>
+                <a href="{{ route('owner.dashboard') }}" class="block px-3 py-2.5 text-sm font-medium text-[#404040] hover:text-[#0a0a0a] hover:bg-[#f5f5f5] rounded-xl transition-colors">Dashboard Owner</a>
             @endif
             @if(auth()->user()->isAdmin())
-                <a href="{{ route('admin.dashboard') }}" class="block px-3 py-2 text-sm font-medium text-white/80 hover:text-white rounded-lg hover:bg-white/10 transition-colors">Admin</a>
+                <a href="{{ route('admin.dashboard') }}" class="block px-3 py-2.5 text-sm font-medium text-[#404040] hover:text-[#0a0a0a] hover:bg-[#f5f5f5] rounded-xl transition-colors">Admin</a>
             @endif
-            <a href="{{ route('profile.edit') }}" class="block px-3 py-2 text-sm font-medium text-white/80 hover:text-white rounded-lg hover:bg-white/10 transition-colors">Profil</a>
+            <a href="{{ route('profile.edit') }}" class="block px-3 py-2.5 text-sm font-medium text-[#404040] hover:text-[#0a0a0a] hover:bg-[#f5f5f5] rounded-xl transition-colors">Profil</a>
             <form method="POST" action="{{ route('logout') }}">
                 @csrf
-                <button class="w-full text-left px-3 py-2 text-sm font-medium text-red-300 hover:text-white rounded-lg hover:bg-white/10 transition-colors">Keluar</button>
+                <button class="w-full text-left px-3 py-2.5 text-sm font-medium text-[#dc2626] hover:bg-red-50 rounded-xl transition-colors">Keluar</button>
             </form>
         @else
-            <a href="{{ route('login') }}" class="block px-3 py-2 text-sm font-medium text-white/80 hover:text-white rounded-lg hover:bg-white/10 transition-colors">Masuk</a>
-            <a href="{{ route('register') }}" class="block px-3 py-2 text-sm font-medium text-white rounded-lg bg-white/10 transition-colors">Daftar</a>
+            <a href="{{ route('login') }}" class="block px-3 py-2.5 text-sm font-medium text-[#404040] hover:text-[#0a0a0a] hover:bg-[#f5f5f5] rounded-xl transition-colors">Masuk</a>
+            <a href="{{ route('register') }}" class="block px-3 py-2.5 text-sm font-semibold text-[#0a0a0a] bg-[#f5f5f5] rounded-xl text-center">Daftar</a>
         @endauth
     </div>
 </header>
@@ -144,67 +161,77 @@
 @if(session('success'))
     <div x-data="{ show: true }" x-show="show" x-init="setTimeout(() => show = false, 4000)"
          x-transition:leave="transition ease-in duration-200" x-transition:leave-end="opacity-0 -translate-y-2"
-         class="fixed top-20 right-4 z-50 flex items-center gap-3 bg-white border-l-4 border-primary text-gray-800 px-4 py-3 rounded-xl shadow-lg max-w-sm text-sm">
-        <x-icon name="check" class="w-5 h-5 text-primary shrink-0" />
+         class="fixed top-20 right-4 z-50 flex items-center gap-3 bg-white border border-[#e5e5e5] border-l-4 border-l-[#16a34a] text-[#0a0a0a] px-4 py-3 rounded-2xl shadow-sm max-w-sm text-sm">
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-[#16a34a] shrink-0" fill="none" viewBox="0 0 24 24" stroke-width="1.75" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5"/>
+        </svg>
         <span>{{ session('success') }}</span>
-        <button @click="show=false" class="ml-auto text-gray-400 hover:text-gray-600"><x-icon name="x-mark" class="w-4 h-4" /></button>
+        <button @click="show=false" class="ml-auto text-[#a3a3a3] hover:text-[#737373]">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke-width="1.75" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12"/>
+            </svg>
+        </button>
     </div>
 @endif
 @if(session('error'))
     <div x-data="{ show: true }" x-show="show" x-init="setTimeout(() => show = false, 5000)"
          x-transition:leave="transition ease-in duration-200" x-transition:leave-end="opacity-0 -translate-y-2"
-         class="fixed top-20 right-4 z-50 flex items-center gap-3 bg-white border-l-4 border-red-500 text-gray-800 px-4 py-3 rounded-xl shadow-lg max-w-sm text-sm">
-        <x-icon name="x-circle" class="w-5 h-5 text-red-500 shrink-0" />
+         class="fixed top-20 right-4 z-50 flex items-center gap-3 bg-white border border-[#e5e5e5] border-l-4 border-l-[#dc2626] text-[#0a0a0a] px-4 py-3 rounded-2xl shadow-sm max-w-sm text-sm">
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-[#dc2626] shrink-0" fill="none" viewBox="0 0 24 24" stroke-width="1.75" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" d="m9.75 9.75 4.5 4.5m0-4.5-4.5 4.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/>
+        </svg>
         <span>{{ session('error') }}</span>
-        <button @click="show=false" class="ml-auto text-gray-400 hover:text-gray-600"><x-icon name="x-mark" class="w-4 h-4" /></button>
+        <button @click="show=false" class="ml-auto text-[#a3a3a3] hover:text-[#737373]">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke-width="1.75" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12"/>
+            </svg>
+        </button>
     </div>
 @endif
 @if(session('info'))
     <div x-data="{ show: true }" x-show="show" x-init="setTimeout(() => show = false, 5000)"
          x-transition:leave="transition ease-in duration-200" x-transition:leave-end="opacity-0 -translate-y-2"
-         class="fixed top-20 right-4 z-50 flex items-center gap-3 bg-white border-l-4 border-blue-500 text-gray-800 px-4 py-3 rounded-xl shadow-lg max-w-sm text-sm">
-        <x-icon name="bell" class="w-5 h-5 text-blue-500 shrink-0" />
+         class="fixed top-20 right-4 z-50 flex items-center gap-3 bg-white border border-[#e5e5e5] border-l-4 border-l-[#2563eb] text-[#0a0a0a] px-4 py-3 rounded-2xl shadow-sm max-w-sm text-sm">
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-[#2563eb] shrink-0" fill="none" viewBox="0 0 24 24" stroke-width="1.75" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" d="m11.25 11.25.041-.02a.75.75 0 0 1 1.063.852l-.708 2.836a.75.75 0 0 0 1.063.853l.041-.021M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9-3.75h.008v.008H12V8.25Z"/>
+        </svg>
         <span>{{ session('info') }}</span>
-        <button @click="show=false" class="ml-auto text-gray-400 hover:text-gray-600"><x-icon name="x-mark" class="w-4 h-4" /></button>
+        <button @click="show=false" class="ml-auto text-[#a3a3a3] hover:text-[#737373]">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke-width="1.75" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12"/>
+            </svg>
+        </button>
     </div>
 @endif
 
 {{-- Page content --}}
-<main class="pt-16 min-h-screen">
+<main class="pt-0 min-h-screen">
     {{ $slot }}
 </main>
 
 {{-- Footer --}}
-<footer class="bg-white border-t border-field mt-16">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
-            <div>
-                <x-logo variant="dark" size="sm" />
-                <p class="mt-3 text-sm text-gray-500 leading-relaxed max-w-xs">
-                    Platform reservasi lapangan olahraga. Temukan, pesan, dan bermain.
-                </p>
+<footer class="bg-white border-t border-[#e5e5e5] mt-20">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div class="flex flex-col sm:flex-row items-center justify-between gap-4">
+            {{-- Logo + tagline --}}
+            <div class="flex items-center gap-3">
+                <div class="flex items-center gap-1">
+                    <span class="font-display text-xl font-bold uppercase tracking-tight text-[#0a0a0a]">GOALIN</span>
+                    <span class="w-1.5 h-1.5 rounded-full bg-[#16a34a] mb-2"></span>
+                </div>
+                <span class="text-xs text-[#a3a3a3]">Platform booking lapangan olahraga</span>
             </div>
-            <div>
-                <p class="label mb-3">Layanan</p>
-                <ul class="space-y-2">
-                    <li><a href="{{ route('fields.index') }}" class="text-sm text-gray-500 hover:text-primary transition-colors">Cari Lapangan</a></li>
-                    @auth
-                        <li><a href="{{ route('bookings.index') }}" class="text-sm text-gray-500 hover:text-primary transition-colors">Pemesanan Saya</a></li>
-                    @else
-                        <li><a href="{{ route('register') }}" class="text-sm text-gray-500 hover:text-primary transition-colors">Daftar Gratis</a></li>
-                    @endauth
-                </ul>
+            {{-- Links --}}
+            <div class="flex items-center gap-6">
+                <a href="{{ route('fields.index') }}" class="text-xs text-[#737373] hover:text-[#0a0a0a] transition-colors">Lapangan</a>
+                @auth
+                    <a href="{{ route('bookings.index') }}" class="text-xs text-[#737373] hover:text-[#0a0a0a] transition-colors">Pemesanan</a>
+                @else
+                    <a href="{{ route('register') }}" class="text-xs text-[#737373] hover:text-[#0a0a0a] transition-colors">Daftar Gratis</a>
+                @endauth
             </div>
-            <div>
-                <p class="label mb-3">Untuk Owner</p>
-                <ul class="space-y-2">
-                    <li><a href="{{ route('register') }}" class="text-sm text-gray-500 hover:text-primary transition-colors">Daftarkan Lapangan</a></li>
-                </ul>
-            </div>
-        </div>
-        <div class="border-t border-field pt-6 flex flex-col sm:flex-row items-center justify-between gap-3">
-            <p class="text-xs text-gray-400">&copy; {{ date('Y') }} GOALIN. All rights reserved.</p>
-            <p class="text-xs text-gray-400">Bangun dengan semangat untuk pecinta olahraga.</p>
+            {{-- Copyright --}}
+            <p class="text-xs text-[#a3a3a3]">&copy; {{ date('Y') }} GOALIN.</p>
         </div>
     </div>
 </footer>

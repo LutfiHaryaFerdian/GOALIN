@@ -2,30 +2,29 @@
     <x-slot name="title">{{ $field->name }}</x-slot>
 
     {{-- Full-width image header --}}
-    <div class="relative h-72 md:h-96 bg-primary-light overflow-hidden">
-        @if($field->images && count($field->images) > 0)
-            <img src="{{ Storage::url($field->images[0]) }}" alt="{{ $field->name }}"
-                 class="w-full h-full object-cover">
-        @else
-            <div class="w-full h-full flex items-center justify-center">
-                <x-icon name="field" class="w-20 h-20 text-primary opacity-20" />
-            </div>
-        @endif
-        <div class="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent"></div>
-        <div class="absolute bottom-0 inset-x-0 px-4 sm:px-6 lg:px-8 pb-6 max-w-7xl mx-auto">
-            <span class="inline-block px-3 py-1 bg-white/95 text-primary text-xs font-bold rounded-full mb-3 uppercase tracking-wide">
-                {{ $field->category->name }}
-            </span>
-            <h1 class="text-3xl md:text-4xl font-extrabold text-white">{{ $field->name }}</h1>
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8">
+        <div class="relative aspect-[16/9] rounded-3xl overflow-hidden bg-[#f5f5f5]">
+            @if($field->images && count($field->images) > 0)
+                <img src="{{ Storage::url($field->images[0]) }}" alt="{{ $field->name }}"
+                     class="w-full h-full object-cover">
+            @else
+                <div class="w-full h-full flex items-center justify-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-20 h-20 text-[#d4d4d4]" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="m2.25 15.75 5.159-5.159a2.25 2.25 0 0 1 3.182 0l5.159 5.159m-1.5-1.5 1.409-1.409a2.25 2.25 0 0 1 3.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 0 0 1.5-1.5V6a1.5 1.5 0 0 0-1.5-1.5H3.75A1.5 1.5 0 0 0 2.25 6v12a1.5 1.5 0 0 0 1.5 1.5Zm10.5-11.25h.008v.008h-.008V8.25Zm.375 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Z"/>
+                    </svg>
+                </div>
+            @endif
         </div>
     </div>
 
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {{-- Breadcrumb --}}
-        <nav class="flex items-center gap-2 text-sm text-gray-400 mb-8">
-            <a href="{{ route('fields.index') }}" class="hover:text-primary transition-colors">Lapangan</a>
-            <x-icon name="chevron-right" class="w-3.5 h-3.5" />
-            <span class="text-gray-700">{{ $field->name }}</span>
+        <nav class="flex items-center gap-2 text-sm text-[#a3a3a3] mb-6">
+            <a href="{{ route('fields.index') }}" class="hover:text-[#0a0a0a] transition-colors">Lapangan</a>
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5"/>
+            </svg>
+            <span class="text-[#0a0a0a] font-medium">{{ $field->name }}</span>
         </nav>
 
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -53,26 +52,22 @@
 
                 {{-- Description --}}
                 @if($field->description)
-                    <div class="card p-6">
-                        <h2 class="text-sm font-bold uppercase tracking-wide text-gray-400 mb-3">Tentang Lapangan</h2>
-                        <p class="text-gray-600 text-sm leading-relaxed">{{ $field->description }}</p>
+                    <div class="bg-white border border-[#e5e5e5] rounded-2xl p-6">
+                        <h2 class="section-label mb-3">Tentang Lapangan</h2>
+                        <p class="text-[#404040] text-sm leading-relaxed">{{ $field->description }}</p>
                     </div>
                 @endif
 
                 {{-- Facilities --}}
                 @if($field->facilities && count($field->facilities) > 0)
-                    <div class="card p-6">
-                        <h2 class="text-sm font-bold uppercase tracking-wide text-gray-400 mb-4">Fasilitas</h2>
-                        @php
-                            $facilityIcons = [
-                                'parkir'=>'car', 'toilet'=>'user', 'mushola'=>'star',
-                                'wifi'=>'bell', 'ac'=>'clock', 'kantin'=>'banknotes', 'loker'=>'shield',
-                            ];
-                        @endphp
+                    <div class="bg-white border border-[#e5e5e5] rounded-2xl p-6">
+                        <h2 class="section-label mb-4">Fasilitas</h2>
                         <div class="flex flex-wrap gap-2">
                             @foreach($field->facilities as $facility)
-                                <span class="flex items-center gap-2 px-3 py-1.5 bg-primary-light text-primary rounded-lg text-sm font-medium">
-                                    <x-icon name="{{ $facilityIcons[$facility] ?? 'check' }}" class="w-4 h-4" />
+                                <span class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-[#f5f5f5] text-[#404040] rounded-full text-sm font-medium">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5 text-[#16a34a]" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5"/>
+                                    </svg>
                                     {{ ucfirst($facility) }}
                                 </span>
                             @endforeach
@@ -81,16 +76,16 @@
                 @endif
 
                 {{-- Owner info --}}
-                <div class="card p-6">
-                    <h2 class="text-sm font-bold uppercase tracking-wide text-gray-400 mb-4">Pengelola</h2>
+                <div class="bg-white border border-[#e5e5e5] rounded-2xl p-6">
+                    <h2 class="section-label mb-4">Pengelola</h2>
                     <div class="flex items-center gap-3">
-                        <div class="w-10 h-10 rounded-xl bg-primary-light flex items-center justify-center font-bold text-primary">
+                        <div class="w-10 h-10 rounded-full bg-[#0a0a0a] flex items-center justify-center font-bold text-white text-sm">
                             {{ strtoupper(substr($field->owner->name, 0, 1)) }}
                         </div>
                         <div>
-                            <p class="font-semibold text-gray-900">{{ $field->owner->name }}</p>
+                            <p class="font-semibold text-[#0a0a0a]">{{ $field->owner->name }}</p>
                             @if($field->owner->phone)
-                                <p class="text-sm text-gray-500">{{ $field->owner->phone }}</p>
+                                <p class="text-sm text-[#737373]">{{ $field->owner->phone }}</p>
                             @endif
                         </div>
                     </div>
@@ -271,7 +266,7 @@
                 };
                 </script>
 
-                <div class="sticky top-24 card p-5"
+                <div class="sticky top-24 bg-white border border-[#e5e5e5] rounded-3xl p-6"
                      x-data="slotPicker(
                          {{ $field->price_per_hour }},
                          {{ Js::from($schedulesJson) }},
@@ -282,15 +277,14 @@
                      x-init="initPolling('{{ route('fields.slot-status', $field->slug) }}', {{ Js::from($dates) }})"
                      @destroy="destroyPolling()">
                     <div class="flex items-center justify-between mb-1">
-                        <h2 class="font-bold text-gray-900">Pilih Jadwal</h2>
+                        <h2 class="font-semibold text-[#0a0a0a]">Pilih Jadwal</h2>
                         <div class="flex items-center gap-2">
-                            {{-- Live indicator --}}
-                            <span class="flex items-center gap-1 text-[10px] text-emerald-600 font-medium">
-                                <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse inline-block"></span>
+                            <span class="flex items-center gap-1 text-[10px] text-[#16a34a] font-semibold">
+                                <span class="w-1.5 h-1.5 rounded-full bg-[#16a34a] animate-pulse inline-block"></span>
                                 Live
                             </span>
-                            <span class="text-sm font-bold text-primary">
-                                Rp {{ number_format($field->price_per_hour, 0, ',', '.') }}<span class="text-gray-400 font-normal">/jam</span>
+                            <span class="text-sm font-bold text-[#0a0a0a]">
+                                Rp {{ number_format($field->price_per_hour, 0, ',', '.') }}<span class="text-[#a3a3a3] font-normal">/jam</span>
                             </span>
                         </div>
                     </div>
@@ -306,8 +300,8 @@
                         @foreach($dates as $date)
                             <button @click="selectDate('{{ $date }}')"
                                 :class="selectedDate === '{{ $date }}'
-                                    ? 'bg-primary text-white'
-                                    : 'bg-accent text-gray-600 hover:bg-primary-light hover:text-primary'"
+                                    ? 'bg-[#0a0a0a] text-white'
+                                    : 'bg-[#f5f5f5] text-[#737373] hover:bg-[#e5e5e5] hover:text-[#0a0a0a]'"
                                 class="shrink-0 flex flex-col items-center px-3 py-2 rounded-xl text-center transition-colors min-w-[52px]">
                                 <span class="text-[10px] font-semibold uppercase">
                                     {{ \Carbon\Carbon::parse($date)->locale('id')->isoFormat('ddd') }}
@@ -349,18 +343,18 @@
                     </div>
 
                     {{-- Booking summary --}}
-                    <div x-show="selectedSlots.length > 0" x-transition class="mt-4 pt-4 border-t border-field space-y-2">
+                    <div x-show="selectedSlots.length > 0" x-transition class="mt-4 pt-4 border-t border-[#f5f5f5] space-y-2">
                         <div class="flex justify-between text-sm">
-                            <span class="text-gray-500">Durasi</span>
-                            <span class="font-semibold text-gray-900" x-text="selectedSlots.length + ' jam'"></span>
+                            <span class="text-[#737373]">Durasi</span>
+                            <span class="font-semibold text-[#0a0a0a]" x-text="selectedSlots.length + ' jam'"></span>
                         </div>
                         <div class="flex justify-between text-sm">
-                            <span class="text-gray-500">Waktu</span>
-                            <span class="font-semibold text-gray-900" x-text="timeRange"></span>
+                            <span class="text-[#737373]">Waktu</span>
+                            <span class="font-semibold text-[#0a0a0a]" x-text="timeRange"></span>
                         </div>
                         <div class="flex justify-between text-sm mb-3">
-                            <span class="text-gray-500">Total</span>
-                            <span class="font-extrabold text-primary" x-text="formatPrice(totalPrice)"></span>
+                            <span class="text-[#737373]">Total</span>
+                            <span class="font-bold text-[#0a0a0a]" x-text="formatPrice(totalPrice)"></span>
                         </div>
 
                         {{-- Hidden form — inputs injected by Alpine x-for --}}
@@ -373,12 +367,12 @@
 
                         @auth
                             <button @click="submitBooking()"
-                                    class="btn-primary w-full justify-center text-sm py-2.5 mt-1">
+                                    class="w-full flex items-center justify-center gap-2 bg-[#0a0a0a] text-white text-sm font-semibold py-3 rounded-full hover:bg-[#404040] transition-colors mt-1">
                                 Pesan Sekarang
                             </button>
                         @else
                             <a href="{{ route('login') }}"
-                               class="btn-primary w-full justify-center text-sm py-2.5 mt-1 text-center block">
+                               class="w-full flex items-center justify-center gap-2 bg-[#0a0a0a] text-white text-sm font-semibold py-3 rounded-full hover:bg-[#404040] transition-colors mt-1 text-center block">
                                 Login untuk Memesan
                             </a>
                         @endauth
@@ -386,19 +380,19 @@
 
                     {{-- Legend (hidden when summary shown) --}}
                     <div x-show="selectedSlots.length === 0"
-                         class="mt-4 pt-4 border-t border-field flex gap-4 text-xs text-gray-400">
+                         class="mt-4 pt-4 border-t border-[#f5f5f5] flex gap-4 text-xs text-[#a3a3a3]">
                         <span class="flex items-center gap-1.5">
-                            <span class="w-3 h-3 rounded bg-primary-light border border-primary/30 inline-block"></span> Tersedia
+                            <span class="w-3 h-3 rounded-sm bg-[#f0fdf4] border border-[#bbf7d0] inline-block"></span> Tersedia
                         </span>
                         <span class="flex items-center gap-1.5">
-                            <span class="w-3 h-3 rounded bg-gray-100 inline-block"></span> Terpesan
+                            <span class="w-3 h-3 rounded-sm bg-[#f5f5f5] inline-block"></span> Terpesan
                         </span>
                     </div>
 
                     @guest
-                        <div class="mt-4 p-3 bg-primary-light rounded-xl text-center">
-                            <p class="text-xs text-primary font-medium mb-2">Login untuk memesan</p>
-                            <a href="{{ route('login') }}" class="btn-primary w-full justify-center text-xs py-2">
+                        <div class="mt-4 p-4 bg-[#f8f8f6] border border-[#e5e5e5] rounded-2xl text-center">
+                            <p class="text-xs text-[#737373] font-medium mb-3">Login untuk memesan</p>
+                            <a href="{{ route('login') }}" class="w-full flex items-center justify-center gap-2 bg-[#0a0a0a] text-white text-xs font-semibold py-2.5 rounded-full hover:bg-[#404040] transition-colors block">
                                 Masuk Sekarang
                             </a>
                         </div>
