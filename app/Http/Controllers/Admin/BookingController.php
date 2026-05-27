@@ -6,7 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Booking;
 use App\Models\Field;
 use Illuminate\Http\Request;
-use Inertia\Inertia;
+
 
 class BookingController extends Controller
 {
@@ -24,8 +24,8 @@ class BookingController extends Controller
 
         $bookings = $query->latest()->paginate(20)->withQueryString();
 
-        return Inertia::render('Admin/Bookings/Index', [
-            'bookings' => $bookings->toArray(),
+        return view('admin.bookings.index', [
+            'bookings' => $bookings,
             'filters'  => $request->only(['status', 'search']),
         ]);
     }
@@ -34,6 +34,6 @@ class BookingController extends Controller
     {
         $booking->load(['user', 'field.location', 'field.category', 'field.owner', 'schedule', 'paymentLogs']);
 
-        return Inertia::render('Admin/Bookings/Show', ['booking' => $booking->toArray()]);
+        return view('admin.bookings.show', ['booking' => $booking]);
     }
 }

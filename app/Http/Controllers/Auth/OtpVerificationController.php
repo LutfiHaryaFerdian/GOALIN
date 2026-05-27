@@ -10,7 +10,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
-use Inertia\Inertia;
+
 
 class OtpVerificationController extends Controller
 {
@@ -29,7 +29,7 @@ class OtpVerificationController extends Controller
         $email = session('register_data.email');
         $role  = session('register_data.role', 'user');
 
-        return Inertia::render('Auth/VerifyOtp', [
+        return view('auth.verify-otp', [
             'type'         => 'registration',
             'email'        => $email,
             'registerRole' => $role,

@@ -65,6 +65,7 @@ Route::middleware(['auth'])->group(function () {
 
     // Payment — generate snap token & finish redirect
     Route::post('/payment/{booking}/snap-token', [PaymentController::class, 'getSnapToken'])->name('payment.snap-token');
+    Route::get('/payment/{booking}/check-status', [PaymentController::class, 'checkStatus'])->name('payment.check-status');
     Route::get('/payment/finish', [PaymentController::class, 'finish'])->name('payment.finish');
 
     // Notifications
@@ -123,3 +124,4 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
 });
 
 require __DIR__.'/auth.php';
+

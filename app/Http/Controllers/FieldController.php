@@ -7,7 +7,7 @@ use App\Models\FieldCategory;
 use App\Models\Location;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
-use Inertia\Inertia;
+
 
 class FieldController extends Controller
 {
@@ -44,19 +44,15 @@ class FieldController extends Controller
 
         $fields = $query->latest()->paginate(9)->withQueryString();
 
-        // Cache dropdown data — 1 hour TTL; forget when category/location changes
-        $categories = Cache::remember('fieldcategories.active', 3600, function () {
-            return FieldCategory::where('is_active', true)->orderBy('name')->get();
-        });
+        // Dropdown data — langsung dari DB, hindari masalah Eloquent serialization di file cache
+        $categories = FieldCategory::where('is_active', true)->orderBy('name')->get();
 
-        $cities = Cache::remember('locations.active.cities', 3600, function () {
-            return Location::where('is_active', true)->distinct()->orderBy('city')->pluck('city');
-        });
+        $cities = Location::where('is_active', true)->distinct()->orderBy('city')->pluck('city');
 
-        return Inertia::render('Fields/Index', [
-            'fields'     => $fields->toArray(),
-            'categories' => $categories->values(),
-            'cities'     => $cities->values(),
+        return view('fields.index', [
+            'fields'     => $fields,
+            'categories' => $categories,
+            'cities'     => $cities,
             'filters'    => $request->only(['search', 'category', 'city']),
         ]);
     }
@@ -80,15 +76,10 @@ class FieldController extends Controller
 
         $schedules = $this->getSchedules($field->id, $dates);
 
-        return Inertia::render('Fields/Show', [
-            'field'     => array_merge($field->toArray(), [
-                'images'  => $field->images ?? [],
-                'owner'   => $field->owner ? $field->owner->only(['name', 'phone']) : null,
-                'reviews' => $field->reviews ?? [],
-            ]),
-            'schedules' => $schedules->map(fn($day) => $day->toArray())->toArray(),
+        return view('fields.show', [
+            'field'     => $field,
+            'schedules' => $schedules,
             'dates'     => $dates,
-            'pollUrl'   => route('fields.slot-status', $field->slug),
         ]);
     }
 

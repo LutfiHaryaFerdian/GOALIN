@@ -16,10 +16,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'role' => RoleMiddleware::class,
         ]);
 
-        // Register Inertia middleware in web group
-        $middleware->web(append: [
-            \App\Http\Middleware\HandleInertiaRequests::class,
-        ]);
+
 
         // Trust semua proxy — diperlukan saat akses via ngrok
         $middleware->trustProxies(at: '*');

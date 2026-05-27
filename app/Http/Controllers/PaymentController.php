@@ -7,6 +7,8 @@ use App\Models\PaymentLog;
 use App\Services\MidtransService;
 use App\Services\NotificationService;
 use Illuminate\Http\Request;
+use Midtrans\Config;
+use Midtrans\Transaction;
 
 class PaymentController extends Controller
 {
@@ -112,10 +114,108 @@ class PaymentController extends Controller
     }
 
     /**
+     * Cek status transaksi langsung ke Midtrans API dan update DB.
+     * Dipanggil oleh frontend (Alpine.js) setelah Snap popup onSuccess/onPending.
+     */
+    public function checkStatus(Booking $booking)
+    {
+        abort_if($booking->user_id !== auth()->id(), 403);
+
+        if (!$booking->midtrans_order_id) {
+            return response()->json(['payment_status' => $booking->payment_status]);
+        }
+
+        try {
+            // Setup Midtrans config
+            Config::$serverKey    = config('midtrans.server_key');
+            Config::$isProduction = config('midtrans.is_production');
+
+            // Query status langsung ke Midtrans
+            $status = Transaction::status($booking->midtrans_order_id);
+
+            $transactionStatus = $status->transaction_status ?? null;
+            $fraudStatus       = $status->fraud_status ?? null;
+            $paymentType       = $status->payment_type ?? null;
+            $transactionId     = $status->transaction_id ?? null;
+
+            if ($transactionStatus === 'capture') {
+                $paymentStatus = $fraudStatus === 'accept' ? 'paid' : 'unpaid';
+            } elseif ($transactionStatus === 'settlement') {
+                $paymentStatus = 'paid';
+            } elseif (in_array($transactionStatus, ['cancel', 'deny', 'expire'])) {
+                $paymentStatus = 'unpaid';
+                $booking->update(['midtrans_snap_token' => null]);
+            } else {
+                $paymentStatus = 'unpaid'; // pending / other
+            }
+
+            // Update hanya jika statusnya berubah
+            if ($booking->payment_status !== $paymentStatus) {
+                $booking->update([
+                    'payment_status'          => $paymentStatus,
+                    'midtrans_transaction_id' => $transactionId,
+                    'midtrans_payment_type'   => $paymentType,
+                ]);
+
+                // Log jika belum ada entry untuk transaksi ini
+                if ($transactionId) {
+                    PaymentLog::firstOrCreate(
+                        ['transaction_id' => $transactionId],
+                        [
+                            'booking_id'         => $booking->id,
+                            'order_id'           => $booking->midtrans_order_id,
+                            'transaction_status' => $transactionStatus,
+                            'payment_type'       => $paymentType,
+                            'gross_amount'       => $status->gross_amount ?? $booking->total_price,
+                            'raw_payload'        => json_encode($status),
+                        ]
+                    );
+                }
+
+                // Kirim notifikasi jika baru saja lunas
+                if ($paymentStatus === 'paid') {
+                    $booking->load(['user', 'field']);
+                    try {
+                        NotificationService::send(
+                            $booking->user_id,
+                            'payment_success',
+                            'Pembayaran Berhasil',
+                            "Pembayaran untuk {$booking->booking_code} telah berhasil.",
+                            $booking->id,
+                        );
+                        \Mail::to($booking->user->email)
+                            ->send(new \App\Mail\PaymentSuccessMail($booking));
+                    } catch (\Exception $e) {
+                        \Log::error('checkStatus notification error: ' . $e->getMessage());
+                    }
+                }
+            }
+
+            return response()->json(['payment_status' => $paymentStatus]);
+
+        } catch (\Exception $e) {
+            \Log::error('Midtrans checkStatus error: ' . $e->getMessage());
+            // Kembalikan status dari DB jika Midtrans API error
+            return response()->json(['payment_status' => $booking->payment_status]);
+        }
+    }
+
+    /**
      * Halaman finish setelah user selesai di popup Snap.
      */
     public function finish(Request $request)
     {
+        $orderId = $request->query('order_id');
+
+        // Jika ada order_id, coba temukan booking dan update status
+        if ($orderId) {
+            $booking = Booking::where('midtrans_order_id', $orderId)->first();
+            if ($booking && $booking->user_id === auth()->id()) {
+                return redirect()->route('bookings.show', $booking)
+                    ->with('info', 'Pembayaran sedang diproses. Status akan diperbarui otomatis.');
+            }
+        }
+
         return redirect()->route('bookings.index')
             ->with('info', 'Pembayaran sedang diproses. Status akan diperbarui otomatis.');
     }

@@ -8,7 +8,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rules;
-use Inertia\Inertia;
+
 
 class PasswordChangeController extends Controller
 {
@@ -33,7 +33,7 @@ class PasswordChangeController extends Controller
     {
         $user = $request->user();
 
-        return Inertia::render('Auth/VerifyOtp', [
+        return view('auth.verify-otp', [
             'type'  => 'password_change',
             'email' => $user->email,
         ]);
@@ -78,7 +78,7 @@ class PasswordChangeController extends Controller
                 ->withErrors(['otp' => 'Silakan verifikasi OTP terlebih dahulu.']);
         }
 
-        return Inertia::render('Auth/ChangePassword');
+        return view('auth.change-password');
     }
 
     /**

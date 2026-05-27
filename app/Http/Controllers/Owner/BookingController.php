@@ -10,7 +10,7 @@ use App\Services\NotificationService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
-use Inertia\Inertia;
+
 
 class BookingController extends Controller
 {
@@ -30,8 +30,8 @@ class BookingController extends Controller
 
         $bookings = $query->latest()->paginate(15);
 
-        return Inertia::render('Owner/Bookings/Index', [
-            'bookings' => $bookings->toArray(),
+        return view('owner.bookings.index', [
+            'bookings' => $bookings,
             'filters'  => $request->only(['status']),
         ]);
     }

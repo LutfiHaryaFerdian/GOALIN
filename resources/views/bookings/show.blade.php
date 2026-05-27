@@ -79,7 +79,8 @@
             {{-- Tombol Bayar — hanya untuk unpaid & bukan cancelled --}}
             @if($booking->payment_status === 'unpaid' && $booking->status !== 'cancelled')
                 <div class="card p-6 mb-4 border-primary/20 bg-gradient-to-br from-white to-primary-light/30"
-                     x-data="paymentHandler({{ $booking->id }})">
+                     x-data="paymentHandler({{ $booking->id }})"
+                     @if($booking->midtrans_order_id) x-init="autoCheckOnLoad()" @endif>
 
                     <div class="flex items-center gap-3 mb-4">
                         <div class="w-10 h-10 bg-primary/10 rounded-xl flex items-center justify-center shrink-0">
@@ -116,7 +117,22 @@
 
                     <p x-show="errorMsg" x-text="errorMsg" class="mt-3 text-sm text-red-600 text-center" x-cloak></p>
 
-                    <p class="mt-3 text-center text-xs text-gray-400">
+                    @if($booking->midtrans_order_id)
+                        {{-- Tombol cek status manual — untuk kasus sudah bayar tapi status belum update --}}
+                        <div class="mt-3 flex items-center justify-center gap-2" x-data="{ checking: false }">
+                            <button
+                                @click="checking = true; fetch('/payment/{{ $booking->id }}/check-status', { headers: { 'X-Requested-With': 'XMLHttpRequest', Accept: 'application/json' }}).then(r => r.json()).then(d => { if (d.payment_status === 'paid') { window.location.reload(); } else { checking = false; } }).catch(() => { checking = false; })"
+                                :disabled="checking"
+                                class="text-xs text-primary underline hover:no-underline disabled:opacity-50 flex items-center gap-1"
+                            >
+                                <svg x-show="checking" class="animate-spin w-3 h-3" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path></svg>
+                                <span x-show="!checking">Sudah bayar? Klik untuk cek status</span>
+                                <span x-show="checking">Memeriksa status...</span>
+                            </button>
+                        </div>
+                    @endif
+
+                    <p class="mt-2 text-center text-xs text-gray-400">
                         Didukung: GoPay, QRIS, Virtual Account, Kartu Kredit, dan lainnya
                     </p>
                 </div>
@@ -184,7 +200,6 @@
                 this.errorMsg = '';
 
                 try {
-                    // 1. Minta snap token dari server
                     const res = await fetch(`/payment/${bookingId}/snap-token`, {
                         method: 'POST',
                         headers: {
@@ -200,20 +215,28 @@
 
                     const { snap_token } = await res.json();
 
-                    // 2. Buka popup Snap Midtrans
                     snap.pay(snap_token, {
-                        onSuccess: (result) => {
-                            window.location.href = '/payment/finish?order_id=' + result.order_id;
+                        onSuccess: async (result) => {
+                            // Sync status dari Midtrans API ke DB lalu reload
+                            await this.syncStatus();
+                            window.location.reload();
                         },
-                        onPending: (result) => {
+                        onPending: async (result) => {
+                            await this.syncStatus();
                             window.location.reload();
                         },
                         onError: (result) => {
                             this.errorMsg = 'Pembayaran gagal. Silakan coba lagi.';
                             this.loading  = false;
                         },
-                        onClose: () => {
-                            this.loading = false;
+                        onClose: async () => {
+                            // User tutup popup — sync dulu, mungkin sudah bayar
+                            const paid = await this.syncStatus();
+                            if (paid) {
+                                window.location.reload();
+                            } else {
+                                this.loading = false;
+                            }
                         },
                     });
 
@@ -221,6 +244,26 @@
                     this.errorMsg = err.message || 'Terjadi kesalahan. Silakan coba lagi.';
                     this.loading  = false;
                 }
+            },
+
+            // Sync status pembayaran dari Midtrans API ke DB.
+            // Mengembalikan true jika sudah paid.
+            async syncStatus() {
+                try {
+                    const r = await fetch(`/payment/${bookingId}/check-status`, {
+                        headers: {
+                            'X-Requested-With': 'XMLHttpRequest',
+                            'Accept': 'application/json',
+                        },
+                    });
+                    if (r.ok) {
+                        const data = await r.json();
+                        return data.payment_status === 'paid';
+                    }
+                } catch (e) {
+                    // Ignore error — halaman tetap bisa reload
+                }
+                return false;
             },
         }));
     });

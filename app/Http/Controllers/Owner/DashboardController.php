@@ -6,7 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Booking;
 use App\Models\Field;
 use Illuminate\Support\Facades\Auth;
-use Inertia\Inertia;
+
 
 class DashboardController extends Controller
 {
@@ -30,12 +30,12 @@ class DashboardController extends Controller
                             ->take(5)
                             ->get();
 
-        return Inertia::render('Owner/Dashboard', [
+        return view('owner.dashboard', [
             'totalFields'    => $totalFields,
             'totalBookings'  => $totalBookings,
             'pendingCount'   => $pendingCount,
             'revenue'        => $revenue,
-            'recentBookings' => $recentBookings->toArray(),
+            'recentBookings' => $recentBookings,
         ]);
     }
 }

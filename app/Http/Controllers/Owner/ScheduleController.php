@@ -9,7 +9,7 @@ use App\Models\FieldSchedule;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Inertia\Inertia;
+
 
 class ScheduleController extends Controller
 {
@@ -30,9 +30,9 @@ class ScheduleController extends Controller
             ->get()
             ->groupBy(fn($s) => $s->schedule_date->format('Y-m-d'));
 
-        return Inertia::render('Owner/Schedules/Index', [
-            'field'     => $field->toArray(),
-            'schedules' => $schedules->map(fn($day) => $day->toArray())->toArray(),
+        return view('owner.schedules.index', [
+            'field'     => $field,
+            'schedules' => $schedules,
             'dates'     => $dates,
         ]);
     }

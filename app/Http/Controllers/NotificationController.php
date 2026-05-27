@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Notification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Inertia\Inertia;
+
 
 class NotificationController extends Controller
 {
@@ -23,8 +23,8 @@ class NotificationController extends Controller
             return $n;
         });
 
-        return Inertia::render('Notifications/Index', [
-            'notifications' => $notifications->toArray(),
+        return view('notifications.index', [
+            'notifications' => $notifications,
         ]);
     }
 

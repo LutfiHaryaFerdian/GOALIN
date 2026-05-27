@@ -6,7 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Booking;
 use App\Models\Field;
 use App\Models\User;
-use Inertia\Inertia;
+
 
 class DashboardController extends Controller
 {
@@ -25,14 +25,14 @@ class DashboardController extends Controller
             ->take(10)
             ->get();
 
-        return Inertia::render('Admin/Dashboard', [
+        return view('admin.dashboard', [
             'totalUsers'        => $totalUsers,
             'totalFields'       => $totalFields,
             'totalBookings'     => $totalBookings,
             'totalRevenue'      => $totalRevenue,
             'pendingBookings'   => $pendingBookings,
             'confirmedBookings' => $confirmedBookings,
-            'recentBookings'    => $recentBookings->toArray(),
+            'recentBookings'    => $recentBookings,
         ]);
     }
 }
