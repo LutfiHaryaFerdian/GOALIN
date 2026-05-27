@@ -8,7 +8,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rules;
-use Illuminate\View\View;
+use Inertia\Inertia;
 
 class PasswordChangeController extends Controller
 {
@@ -29,11 +29,11 @@ class PasswordChangeController extends Controller
     /**
      * Step 2: Tampilkan halaman input OTP ganti password.
      */
-    public function showVerifyForm(Request $request): View|RedirectResponse
+    public function showVerifyForm(Request $request)
     {
         $user = $request->user();
 
-        return view('auth.verify-otp', [
+        return Inertia::render('Auth/VerifyOtp', [
             'type'  => 'password_change',
             'email' => $user->email,
         ]);
@@ -70,7 +70,7 @@ class PasswordChangeController extends Controller
     /**
      * Step 4: Tampilkan form input password baru.
      */
-    public function showChangeForm(): View|RedirectResponse
+    public function showChangeForm()
     {
         // Guard: jika belum verifikasi OTP, redirect ke profil
         if (!session('password_otp_verified')) {
@@ -78,7 +78,7 @@ class PasswordChangeController extends Controller
                 ->withErrors(['otp' => 'Silakan verifikasi OTP terlebih dahulu.']);
         }
 
-        return view('auth.change-password');
+        return Inertia::render('Auth/ChangePassword');
     }
 
     /**

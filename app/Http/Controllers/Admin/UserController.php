@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Inertia\Inertia;
 
 class UserController extends Controller
 {
@@ -23,12 +24,15 @@ class UserController extends Controller
 
         $users = $query->latest()->paginate(20)->withQueryString();
 
-        return view('admin.users.index', compact('users'));
+        return Inertia::render('Admin/Users/Index', [
+            'users'   => $users->toArray(),
+            'filters' => $request->only(['role', 'search']),
+        ]);
     }
 
     public function edit(User $user)
     {
-        return view('admin.users.edit', compact('user'));
+        return Inertia::render('Admin/Users/Edit', ['user' => $user->toArray()]);
     }
 
     public function update(Request $request, User $user)

@@ -10,7 +10,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
-use Illuminate\View\View;
+use Inertia\Inertia;
 
 class OtpVerificationController extends Controller
 {
@@ -19,7 +19,7 @@ class OtpVerificationController extends Controller
     /**
      * Tampilkan halaman input OTP registrasi.
      */
-    public function showRegistrationForm(): View|RedirectResponse
+    public function showRegistrationForm()
     {
         // Guard: jika tidak ada session register_data, redirect ke register
         if (!session('register_data')) {
@@ -27,10 +27,12 @@ class OtpVerificationController extends Controller
         }
 
         $email = session('register_data.email');
+        $role  = session('register_data.role', 'user');
 
-        return view('auth.verify-otp', [
-            'type'  => 'registration',
-            'email' => $email,
+        return Inertia::render('Auth/VerifyOtp', [
+            'type'         => 'registration',
+            'email'        => $email,
+            'registerRole' => $role,
         ]);
     }
 

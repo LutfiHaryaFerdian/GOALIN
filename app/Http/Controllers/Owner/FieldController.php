@@ -10,6 +10,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Str;
+use Inertia\Inertia;
 
 class FieldController extends Controller
 {
@@ -20,7 +21,7 @@ class FieldController extends Controller
             ->latest()
             ->paginate(10);
 
-        return view('owner.fields.index', compact('fields'));
+        return Inertia::render('Owner/Fields/Index', ['fields' => $fields->toArray()]);
     }
 
     public function create()
@@ -28,7 +29,7 @@ class FieldController extends Controller
         $categories = FieldCategory::where('is_active', true)->orderBy('name')->get();
         $locations = Location::where('is_active', true)->orderBy('city')->get();
 
-        return view('owner.fields.create', compact('categories', 'locations'));
+        return Inertia::render('Owner/Fields/Create', compact('categories', 'locations'));
     }
 
     public function store(Request $request)
@@ -73,7 +74,7 @@ class FieldController extends Controller
         $categories = FieldCategory::where('is_active', true)->orderBy('name')->get();
         $locations = Location::where('is_active', true)->orderBy('city')->get();
 
-        return view('owner.fields.edit', compact('field', 'categories', 'locations'));
+        return Inertia::render('Owner/Fields/Edit', compact('field', 'categories', 'locations'));
     }
 
     public function update(Request $request, Field $field)

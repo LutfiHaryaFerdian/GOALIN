@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Notification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Inertia\Inertia;
 
 class NotificationController extends Controller
 {
@@ -15,7 +16,16 @@ class NotificationController extends Controller
             ->latest()
             ->paginate(20);
 
-        return view('notifications.index', compact('notifications'));
+        // Add computed fields for frontend
+        $notifications->through(function ($n) {
+            $n->is_unread         = is_null($n->read_at);
+            $n->created_at_human  = $n->created_at->diffForHumans();
+            return $n;
+        });
+
+        return Inertia::render('Notifications/Index', [
+            'notifications' => $notifications->toArray(),
+        ]);
     }
 
     public function markRead(Notification $notification)
@@ -26,7 +36,7 @@ class NotificationController extends Controller
 
         $notification->markAsRead();
 
-        return redirect()->back()->with('success', 'Notifikasi ditandai sudah dibaca.');
+        return back()->with('success', 'Notifikasi ditandai sudah dibaca.');
     }
 
     public function markAllRead()

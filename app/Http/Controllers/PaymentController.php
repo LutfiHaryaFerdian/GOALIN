@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Booking;
 use App\Models\PaymentLog;
 use App\Services\MidtransService;
+use App\Services\NotificationService;
 use Illuminate\Http\Request;
 
 class PaymentController extends Controller
@@ -94,7 +95,13 @@ class PaymentController extends Controller
         // Kirim notifikasi & email jika pembayaran berhasil
         if ($paymentStatus === 'paid') {
             try {
-                $booking->user->notify(new \App\Notifications\PaymentSuccessNotification($booking));
+                NotificationService::send(
+                    $booking->user_id,
+                    'payment_success',
+                    'Pembayaran Berhasil',
+                    "Pembayaran untuk pemesanan {$booking->booking_code} (lapangan {$booking->field->name}) telah berhasil.",
+                    $booking->id,
+                );
                 \Mail::to($booking->user->email)->send(new \App\Mail\PaymentSuccessMail($booking));
             } catch (\Exception $e) {
                 \Log::error('Payment success notification error: ' . $e->getMessage());

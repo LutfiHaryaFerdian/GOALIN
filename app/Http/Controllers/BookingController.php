@@ -9,6 +9,7 @@ use App\Services\NotificationService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Inertia\Inertia;
 
 class BookingController extends Controller
 {
@@ -25,7 +26,7 @@ class BookingController extends Controller
             ->latest()
             ->paginate(10);
 
-        return view('bookings.index', compact('bookings'));
+        return Inertia::render('Bookings/Index', ['bookings' => $bookings->toArray()]);
     }
 
     /**
@@ -64,7 +65,11 @@ class BookingController extends Controller
         // Backward compat: $schedule = first slot (used by any partial view)
         $schedule   = $schedules->first();
 
-        return view('bookings.create', compact('schedule', 'schedules', 'field', 'totalPrice'));
+        return Inertia::render('Bookings/Create', [
+            'schedule'   => $schedule->load('field.location', 'field.category')->toArray(),
+            'schedules'  => $schedules->toArray(),
+            'totalPrice' => $totalPrice,
+        ]);
     }
 
     /**
@@ -146,7 +151,8 @@ class BookingController extends Controller
 
         $booking->load(['field.location', 'field.category', 'schedule']);
 
-        return view('bookings.show', compact('booking'));
+        $booking->load(['field.location', 'field.category', 'field.owner']);
+        return Inertia::render('Bookings/Show', ['booking' => $booking->toArray()]);
     }
 
     /**
