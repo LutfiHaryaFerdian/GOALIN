@@ -13,35 +13,52 @@ export default {
     theme: {
         extend: {
             fontFamily: {
-                display: ['"Barlow Condensed"', 'sans-serif'],
-                sans:    ['Inter', ...defaultTheme.fontFamily.sans],
+                display: ['"Feather Bold"', 'Nunito', 'sans-serif'],
+                sans:    ['Nunito', 'sans-serif'],
             },
             colors: {
                 ink: {
-                    DEFAULT: '#0a0a0a',
-                    2:       '#404040',
-                    3:       '#737373',
+                    DEFAULT: '#3C3C3C',
+                    muted:   '#777777',
+                    2:       '#777777',
+                    3:       '#777777',
                 },
                 green: {
-                    DEFAULT: '#16a34a',
-                    dark:    '#15803d',
-                    light:   '#f0fdf4',
-                    border:  '#bbf7d0',
+                    DEFAULT: '#58cc02',
+                    dark:    '#49ad00',
+                    shadow:  '#58a700',
+                    light:   '#f7f7f7',
+                    border:  '#e5e5e5',
                 },
                 line: {
                     DEFAULT: '#e5e5e5',
-                    light:   '#f5f5f5',
+                    light:   '#ebebeb',
                 },
-                surface: '#ffffff',
-                canvas:  '#f8f8f6',
+                surface: {
+                    DEFAULT: '#ffffff',
+                    1:       '#f7f7f7',
+                    2:       '#ebebeb',
+                },
+                canvas:  '#ffffff',
 
                 // keep legacy aliases so existing blade files don't break
                 primary: {
-                    DEFAULT: '#16a34a',
-                    dark:    '#15803d',
-                    light:   '#f0fdf4',
+                    DEFAULT: '#58cc02',
+                    dark:    '#49ad00',
+                    shadow:  '#58a700',
+                    light:   '#f7f7f7',
                 },
-                accent:  '#f8f8f6',
+                secondary: {
+                    DEFAULT: '#1cb0f6',
+                    dark:    '#0f9fd9',
+                },
+                accent: {
+                    yellow: '#ffc800',
+                    red:    '#ff4b4b',
+                    purple: '#ce82ff',
+                },
+                streak: '#ff9600',
+                xp:     '#ffc800',
                 field:   '#e5e5e5',
             },
             borderRadius: {

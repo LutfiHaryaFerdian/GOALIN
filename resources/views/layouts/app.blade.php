@@ -8,7 +8,7 @@
     <meta name="description" content="{{ $metaDescription ?? 'GOALIN — Pesan lapangan olahraga terbaik di kotamu.' }}">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800;900&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@500;600;700;800;900&display=swap" rel="stylesheet">
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     {{-- Midtrans Snap.js --}}
     <script
@@ -60,6 +60,25 @@
             {{-- Right side --}}
             <div class="flex items-center gap-2">
                 @auth
+                    {{-- Streak & XP --}}
+                    @php
+                        $streakCount = auth()->user()->bookings()->whereIn('status', ['confirmed', 'completed'])->count();
+                        $xpCount = $streakCount * 100;
+                    @endphp
+                    <div class="flex items-center gap-1.5 px-2.5 py-1.5 bg-[#FF9600]/10 text-[#FF9600] rounded-xl font-extrabold text-xs select-none hover:scale-105 transition-transform" title="Streak Booking Anda">
+                        <svg class="w-4 h-4 fill-current animate-pulse text-[#FF9600]" viewBox="0 0 24 24">
+                            <path d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
+                            <path d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
+                        </svg>
+                        <span>{{ $streakCount }}</span>
+                    </div>
+                    <div class="flex items-center gap-1.5 px-2.5 py-1.5 bg-[#FFC800]/10 text-[#FFC800] rounded-xl font-extrabold text-xs select-none hover:scale-105 transition-transform" title="Total XP Anda">
+                        <svg class="w-4 h-4 text-[#FFC800]" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+                        </svg>
+                        <span>{{ $xpCount }} XP</span>
+                    </div>
+
                     {{-- Bell icon --}}
                     @php $unread = \App\Models\Notification::where('user_id', auth()->id())->whereNull('read_at')->count(); @endphp
                     <a href="{{ route('notifications.index') }}"
