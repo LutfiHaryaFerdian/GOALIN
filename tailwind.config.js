@@ -13,57 +13,52 @@ export default {
     theme: {
         extend: {
             fontFamily: {
-                display: ['"Feather Bold"', 'Nunito', 'sans-serif'],
-                sans:    ['Nunito', 'sans-serif'],
+                display: ['"Barlow Condensed"', 'sans-serif'],
+                sans:    ['"DM Sans"', 'sans-serif'],
             },
             colors: {
+                forest:  '#0D3B2E',
+                lime:    '#C6FF00',
+                charcoal:'#1A1A1A',
+                canvas:  '#F5F5F0',
+                muted:   '#717974',
+                error:   '#BA1A1A',
+                surface: '#FFFFFF',
+                // legacy aliases so existing components don't break
                 ink: {
-                    DEFAULT: '#3C3C3C',
-                    muted:   '#777777',
-                    2:       '#777777',
-                    3:       '#777777',
+                    DEFAULT: '#1A1A1A',
+                    muted:   '#717974',
                 },
-                green: {
-                    DEFAULT: '#58cc02',
-                    dark:    '#49ad00',
-                    shadow:  '#58a700',
-                    light:   '#f7f7f7',
-                    border:  '#e5e5e5',
-                },
-                line: {
-                    DEFAULT: '#e5e5e5',
-                    light:   '#ebebeb',
-                },
-                surface: {
-                    DEFAULT: '#ffffff',
-                    1:       '#f7f7f7',
-                    2:       '#ebebeb',
-                },
-                canvas:  '#ffffff',
-
-                // keep legacy aliases so existing blade files don't break
                 primary: {
-                    DEFAULT: '#58cc02',
-                    dark:    '#49ad00',
-                    shadow:  '#58a700',
-                    light:   '#f7f7f7',
+                    DEFAULT: '#0D3B2E',
+                    dark:    '#0a2e23',
+                    light:   '#F5F5F0',
                 },
-                secondary: {
-                    DEFAULT: '#1cb0f6',
-                    dark:    '#0f9fd9',
-                },
-                accent: {
-                    yellow: '#ffc800',
-                    red:    '#ff4b4b',
-                    purple: '#ce82ff',
-                },
-                streak: '#ff9600',
-                xp:     '#ffc800',
-                field:   '#e5e5e5',
+                field:   'rgba(26,26,26,0.1)',
             },
             borderRadius: {
-                '2xl': '1rem',
-                '3xl': '1.5rem',
+                DEFAULT: '0px',
+                none:    '0px',
+                sm:      '0px',
+                md:      '0px',
+                lg:      '0px',
+                xl:      '0px',
+                '2xl':   '0px',
+                '3xl':   '0px',
+                full:    '9999px', // used only for avatar-circle class
+            },
+            boxShadow: {
+                none:    'none',
+                DEFAULT: 'none',
+                sm:      'none',
+                md:      'none',
+                lg:      'none',
+                xl:      'none',
+                '2xl':   'none',
+                inner:   'none',
+            },
+            maxWidth: {
+                '8xl': '1280px',
             },
         },
     },

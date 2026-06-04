@@ -1,124 +1,169 @@
 ---
-version: alpha
-name: Duolingo
-description: "A gamified, character-driven canvas built around Duo green (#58CC02) — one of the most recognized brand greens in consumer apps — with bright white surfaces, bold rounded typography, and a supporting cast of vibrant accent colors (yellow #FFC800, red #FF4B4B, blue #1CB0F6) that drive streak and XP mechanics. The system feels physically substantial: thick drop shadows on interactive elements, bold outlines on cards and buttons, and Duo the owl's presence throughout. Typography is set in Feather Bold — a custom rounded display face — that reads as fun and slightly educational, like a children's book that grew up."
-
+name: Athetic Editorial
 colors:
-  primary: "#58CC02"
-  on-primary: "#ffffff"
-  primary-hover: "#49AD00"
-  primary-shadow: "#58A700"
-  secondary: "#1CB0F6"
-  on-secondary: "#ffffff"
-  accent-yellow: "#FFC800"
-  accent-red: "#FF4B4B"
-  accent-purple: "#CE82FF"
-  ink: "#3C3C3C"
-  ink-muted: "#777777"
-  canvas: "#ffffff"
-  surface-1: "#F7F7F7"
-  surface-2: "#EBEBEB"
-  border: "#E5E5E5"
-  streak: "#FF9600"
-  xp: "#FFC800"
-
+  surface: '#f9faf7'
+  surface-dim: '#d9dad8'
+  surface-bright: '#f9faf7'
+  surface-container-lowest: '#ffffff'
+  surface-container-low: '#f3f4f1'
+  surface-container: '#edeeeb'
+  surface-container-high: '#e8e8e6'
+  surface-container-highest: '#e2e3e0'
+  on-surface: '#1a1c1b'
+  on-surface-variant: '#414845'
+  inverse-surface: '#2f312f'
+  inverse-on-surface: '#f0f1ee'
+  outline: '#717974'
+  outline-variant: '#c0c8c3'
+  surface-tint: '#3c6658'
+  primary: '#00241a'
+  on-primary: '#ffffff'
+  primary-container: '#0d3b2e'
+  on-primary-container: '#79a694'
+  inverse-primary: '#a3d0be'
+  secondary: '#5d5f5b'
+  on-secondary: '#ffffff'
+  secondary-container: '#e0e0db'
+  on-secondary-container: '#62635f'
+  tertiary: '#371410'
+  on-tertiary: '#ffffff'
+  tertiary-container: '#512923'
+  on-tertiary-container: '#c88f86'
+  error: '#ba1a1a'
+  on-error: '#ffffff'
+  error-container: '#ffdad6'
+  on-error-container: '#93000a'
+  primary-fixed: '#beedd9'
+  primary-fixed-dim: '#a3d0be'
+  on-primary-fixed: '#002117'
+  on-primary-fixed-variant: '#234e40'
+  secondary-fixed: '#e3e3de'
+  secondary-fixed-dim: '#c6c7c2'
+  on-secondary-fixed: '#1a1c19'
+  on-secondary-fixed-variant: '#454744'
+  tertiary-fixed: '#ffdad4'
+  tertiary-fixed-dim: '#f6b8ae'
+  on-tertiary-fixed: '#33110c'
+  on-tertiary-fixed-variant: '#673b34'
+  background: '#f9faf7'
+  on-background: '#1a1c1b'
+  surface-variant: '#e2e3e0'
 typography:
-  display:
-    fontFamily: "Feather Bold, Nunito, -apple-system, sans-serif"
-    fontSize: 40px
-    fontWeight: 800
-    lineHeight: 1.15
+  display-2xl:
+    fontFamily: Barlow Condensed
+    fontSize: 80px
+    fontWeight: '800'
+    lineHeight: 80px
+    letterSpacing: -0.02em
+  display-lg:
+    fontFamily: Barlow Condensed
+    fontSize: 48px
+    fontWeight: '800'
+    lineHeight: 48px
     letterSpacing: -0.01em
-  body:
-    fontFamily: "Nunito, -apple-system, BlinkMacSystemFont, sans-serif"
-    fontSize: 15px
-    fontWeight: 700
-    lineHeight: 1.5
-    letterSpacing: 0
-
+  display-lg-mobile:
+    fontFamily: Barlow Condensed
+    fontSize: 36px
+    fontWeight: '800'
+    lineHeight: 36px
+  headline-md:
+    fontFamily: Barlow Condensed
+    fontSize: 24px
+    fontWeight: '700'
+    lineHeight: 28px
+  body-lg:
+    fontFamily: DM Sans
+    fontSize: 18px
+    fontWeight: '400'
+    lineHeight: 28px
+  body-md:
+    fontFamily: DM Sans
+    fontSize: 16px
+    fontWeight: '400'
+    lineHeight: 24px
+  label-bold:
+    fontFamily: DM Sans
+    fontSize: 14px
+    fontWeight: '700'
+    lineHeight: 20px
+    letterSpacing: 0.05em
+  label-sm:
+    fontFamily: DM Sans
+    fontSize: 12px
+    fontWeight: '500'
+    lineHeight: 16px
 spacing:
-  base: 8px
-  scale: [4, 8, 12, 16, 20, 24, 32, 40, 48, 64]
-
-radius:
-  sm: 8px
-  md: 12px
-  lg: 20px
-  xl: 28px
-  pill: 9999px
-
-shadows:
-  button: "0 4px 0 #58A700"
-  card: "0 2px 0 #E5E5E5"
-  elevated: "0 4px 16px rgba(0,0,0,0.1)"
-
-motion:
-  duration-fast: 80ms
-  duration-base: 200ms
-  easing: cubic-bezier(0.34, 1.56, 0.64, 1)
+  unit: 8px
+  container-max: 1280px
+  gutter: 24px
+  margin-desktop: 48px
+  margin-mobile: 20px
 ---
 
-## 1. Visual Theme & Atmosphere
-Duolingo is the most playful app at scale. Every surface decision reinforces the gamification loop: the green CTA button has a physical shadow (4px bottom) that depresses on press, streaks and XP use warm yellows and oranges, and Duo the owl mascot provides emotional feedback throughout. The app runs on positive reinforcement — correct answers trigger green explosions and character celebrations. The design system serves behavioral psychology as much as aesthetics.
+## Brand & Style
 
-## 2. Color System
-Green is Duolingo's core identity:
-- **Primary green**: #58CC02 — CTAs, correct states, active elements
-- **Green shadow**: #58A700 — 3D button shadow effect, giving buttons physicality
-- **Blue**: #1CB0F6 — secondary actions, listening exercises
-- **Yellow**: #FFC800 — streaks, XP, gold achievements
-- **Red**: #FF4B4B — incorrect answers, hearts/lives
-- **Purple**: #CE82FF — gems, premium features
-- **Canvas**: White with minimal gray surface layers
+The design system is built on the intersection of high-end editorial layouts and raw athletic intensity. It targets urban athletes and facility managers who value efficiency and prestige. The emotional response is one of confidence, momentum, and professional clarity.
 
-## 3. Typography
-Feather Bold (and Nunito as fallback) is rounded and chunky — the letters feel approachable for language learners of all ages. Body text runs heavy (700) even at reading sizes, reinforcing the bold character of the system. All caps labels use tight tracking. No thin weights anywhere — this system doesn't whisper.
+The style is **Editorial Minimalism**. It leverages massive, high-impact typography typically found in sports journalism, balanced by expansive whitespace and a restrained, high-contrast color palette. Visual interest is generated through structural geometry and flat color blocks rather than decorative effects. There are no gradients or soft shadows; the UI is intentionally flat, sharp, and decisive.
 
-## 4. Components & Patterns
-- **CTA button**: Full-width, 3D shadow effect that presses down on click, large border-radius (12px)
-- **Progress bar**: Green fill with animated XP gain, rounded pill shape
-- **Lesson cards**: Bold bordered tiles with character art, thick outline style
-- **Answer options**: Large tap targets, 12px radius, border changes on select (green correct / red wrong)
-- **Streak flame**: Animated fire icon, orange color, always in navigation header
-- **Character feedback**: Full-screen celebration with Duo animation on lesson complete
+## Colors
 
-## 5. Spacing & Layout
-Mobile-first. Primary lesson view is single-column, 16px horizontal padding. Tap targets minimum 56px height. Marketing and web are centered column ~640px max. White space is minimal — the content is dense with interactive elements.
+The palette is driven by the contrast between deep heritage tones and modern neon energy.
 
-## 6. Motion & Interaction
-Highly animated. Correct answers trigger particle explosions. Duo bounces and waves. Buttons physically press. Streak milestones play full-screen animations. The motion design is closer to a mobile game than a productivity app — every interaction has a reward signal.
+- **Primary (#0D3B2E):** Deep Forest Green. Used for primary branding, heavy headers, and sophisticated backgrounds. It represents the "turf" but in a premium, dark-mode context.
+- **Accent (#C6FF00):** Electric Lime. Used exclusively for high-priority calls to action, active states, and focus indicators. This color should be used sparingly to maintain its disruptive impact.
+- **Background (#F5F5F0):** Off-White. The canvas for the application. It provides a warmer, more editorial feel than pure white, reducing eye strain and feeling more "printed."
+- **Text/Surface (#1A1A1A):** Charcoal. Used for primary body text and dark UI elements to ensure maximum legibility against the off-white background.
 
-## Rationale
+## Typography
 
-**Green as correct + brand simultaneously** — #58CC02 serves double duty as both the primary brand color and the "correct answer" feedback color. This conflation is intentional: Duolingo wants users to associate the brand itself with success and positive reinforcement. Every time the app feels rewarding, it's also reinforcing brand recall.
+The typography strategy uses a "Scale and Impact" model. 
 
-**Physical button shadow as behavioral design** — The 4px bottom shadow on the primary CTA is not decoration — it's a behavioral cue. The button looks pressable, not just clickable. When it "depresses" on tap, users receive tactile-like feedback that reinforces the action. This physical metaphor makes the product feel more like a toy than a form, reducing resistance to engagement.
+**Display Styles:** Use Barlow Condensed in Extra-Bold. These must always be uppercase. For hero sections and major headers, use tight tracking (-0.02em) and tight line-height to create a blocky, architectural feel.
 
-**Heavy body weight (700) as legibility for focus** — Running body text at 700 weight even at reading sizes makes text easier to process quickly during language exercises where cognitive load is already high. When you're trying to remember whether "el" or "la" is correct in Spanish, you don't want to spend attention parsing light typography.
+**Body Styles:** Use DM Sans for all functional copy. It provides a clean, geometric counterpoint to the condensed headlines, ensuring the UI remains approachable and highly readable.
 
-**Streak orange + XP yellow as loss aversion mechanics** — The specific warm colors for streaks (#FF9600) and XP (#FFC800) are calibrated for loss aversion psychology. Orange (streak) creates urgency and heat; gold (XP) creates achievement and value. These aren't just brand colors — they're behavioral reinforcement tokens operating on well-documented psychological responses.
+**Functional Labels:** Small labels, such as "Available" or "Pitch Type," should be set in DM Sans Bold, uppercase, with increased letter spacing to ensure they remain distinct at small sizes.
 
-**Full-screen celebration as peak-end rule execution** — The full-screen Duo animation at lesson completion is the peak-end rule applied to learning: users remember the ending most vividly, so the ending should be the most rewarding moment. The design investment in these celebrations directly correlates to the product's industry-leading retention rates.
+## Layout & Spacing
 
-## Accessibility
+This design system utilizes a **Fixed Grid** approach for desktop to maintain editorial control over whitespace, and a **Fluid Grid** for mobile devices.
 
-### Contrast Ratios
-- **Primary on background** (#58CC02 on #ffffff): 2.0:1 — fails AA and AAA (decorative/icon use only)
-- **Text on surface** (#3C3C3C on #ffffff): 10.1:1 — passes AA
-- **Muted on background** (#777777 on #ffffff): 4.0:1 — fails AA for normal text (large text only)
+- **Grid:** A 12-column grid on desktop with generous 24px gutters. Elements should align strictly to these columns to maintain a structured, "newspaper" feel.
+- **Horizontal Rules:** Use 1px solid lines (Charcoal at 10% opacity) to separate sections. This reinforces the editorial aesthetic without adding visual weight.
+- **Whitespace:** Use aggressive vertical padding between sections (80px - 120px) to allow the bold typography room to breathe.
+- **Mobile Adaption:** On mobile, margins reduce to 20px. Display sizes should scale down significantly while maintaining their uppercase, bold character.
 
-### Minimum Requirements
-- **Touch target**: 44×44px minimum for all interactive elements (lesson tap targets 56px height)
-- **Focus indicator**: #1CB0F6 outline, 2px, 2px offset
-- **Focus contrast**: 3.0:1 against #ffffff — supplement with a non-color indicator (e.g. outline offset or box-shadow) to reinforce focus
+## Elevation & Depth
 
-### Motion
-- Respects `prefers-reduced-motion`: yes — particle explosions, Duo character animations, button press physics, streak milestone full-screen animations, and floating reaction emojis must all be suppressed or replaced with instant state changes
-- All transitions use `@media (prefers-reduced-motion: reduce)` guard
+This system rejects shadows in favor of **Tonal Layers** and **Bold Outlines**. 
 
-### Notes
-- The primary green (#58CC02) has very low contrast at 2.0:1 on white — it must never be used as a text color; restrict it to filled button backgrounds (where white text at 4.5:1+ sits on top), large filled progress bars, and brand graphics
-- White text on #58CC02 green button: white (L=1) vs green (L≈0.468) → (1.05/0.518) ≈ 2.0:1 — also fails AA; the green CTA button should carry an additional visual indicator (e.g. a border, icon, or shadow) and be used only at 18px+ bold to achieve large-text AA equivalence
-- Muted gray (#777777) at 4.0:1 fails AA for normal text — use only at 18px+ or 14px+ bold; prefer the stronger #3C3C3C for any body-size secondary text
-- Gamification feedback (green explosions, red wrong-answer flashes) uses color as the sole signal for correct/incorrect — always pair with text feedback ("Correct!" / "Oops!") and sound cues, never color alone
-- The springy easing (cubic-bezier with overshoot) must be disabled under `prefers-reduced-motion: reduce` as the overshoot effect can trigger vestibular discomfort
+- **Flatness:** All elements sit on the same visual plane. Depth is communicated via color blocking (e.g., a Charcoal card on an Off-White background).
+- **Overlays:** For modals or menus, use a solid color fill (Deep Forest Green) rather than a blur.
+- **Borders:** Use thin (1px) borders in Charcoal for input fields and secondary containers. 
+- **Texture:** A subtle "field-grid" pattern—repeating 1px lines or dots representing sports court markings—can be used as a low-contrast background motif in the Primary Green areas.
+
+## Shapes
+
+The shape language is **Sharp**. To maintain the "Editorial Minimalism" and "Sports Energy," all buttons, cards, and input fields utilize 0px border radii. 
+
+The only exception to the sharp-edge rule is for circular icons or specific "Ball" themed graphic elements. All structural UI components remain strictly rectangular to reflect the boundaries and precision of a sports field.
+
+## Components
+
+**Buttons:**
+- **Primary:** Electric Lime background, Charcoal text, All-caps Barlow Condensed. No border. High-impact.
+- **Secondary:** Deep Forest Green background, Off-white text.
+- **Ghost:** 1px Charcoal border, transparent background, Charcoal text.
+
+**Input Fields:**
+- 1px Charcoal border. Labels are always positioned above the field in all-caps DM Sans Bold. Focus state is indicated by a 2px Electric Lime bottom border.
+
+**Cards:**
+- Use a solid background of either Off-White (on Green) or Charcoal (on Off-White). No shadows. Content is padded by 24px on all sides. Use 1px rules to separate internal card content.
+
+**Chips/Tags:**
+- Small, rectangular blocks with Deep Forest Green backgrounds and Off-white text. Used for "5-a-side," "Indoor," or "Floodlights."
+
+**Booking Grid:**
+- A strict table-like structure using 1px rules. The "Selected" time slot should be filled with Electric Lime, creating a high-contrast visual indicator of the user's choice.

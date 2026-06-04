@@ -1,74 +1,79 @@
 <x-app-layout>
     <x-slot name="title">Notifikasi</x-slot>
 
-    <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        {{-- Header --}}
-        <div class="flex items-end justify-between mb-10">
-            <div>
-                <p class="section-label mb-2">INBOX</p>
-                <h1 class="font-display text-4xl md:text-5xl font-black uppercase tracking-tight text-[#0a0a0a]">NOTIFIKASI</h1>
+    {{-- Header dark --}}
+    <div class="bg-[#0D3B2E] texture-field">
+        <div class="max-w-[1280px] mx-auto px-5 md:px-12 py-16">
+            <div class="flex items-end justify-between">
+                <div>
+                    <p class="text-xs font-bold uppercase tracking-[0.2em] text-[#C6FF00] mb-4">INBOX</p>
+                    <h1 class="font-display font-extrabold uppercase leading-none text-white" style="font-size:clamp(40px,5vw,64px)">NOTIFIKASI.</h1>
+                </div>
+                @if($notifications->total() > 0)
+                    <form method="POST" action="{{ route('notifications.read-all') }}">
+                        @csrf
+                        @method('PATCH')
+                        <button type="submit" class="btn-ghost-white py-2.5 px-5 text-xs">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke-width="1.75" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5"/>
+                            </svg>
+                            TANDAI SEMUA DIBACA
+                        </button>
+                    </form>
+                @endif
             </div>
-            @if($notifications->total() > 0)
-                <form method="POST" action="{{ route('notifications.read-all') }}">
-                    @csrf
-                    @method('PATCH')
-                    <button type="submit" class="flex items-center gap-2 text-sm font-medium text-[#737373] hover:text-[#0a0a0a] transition-colors">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke-width="1.75" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5"/>
-                        </svg>
-                        Tandai semua dibaca
-                    </button>
-                </form>
-            @endif
         </div>
+    </div>
 
+    <div class="max-w-[1280px] mx-auto px-5 md:px-12 py-12">
         @if($notifications->isEmpty())
-            <div class="text-center py-32">
-                <p class="font-display text-6xl font-black uppercase text-[#f0f0f0]">KOSONG</p>
-                <p class="text-[#737373] text-sm mt-4">Anda akan mendapat notifikasi saat ada pemesanan baru atau perubahan status.</p>
+            <div class="text-center py-32 border border-[rgba(26,26,26,0.1)]">
+                <p class="font-display font-extrabold uppercase text-[rgba(26,26,26,0.07)]" style="font-size:clamp(40px,5vw,72px)">KOSONG</p>
+                <p class="text-[#717974] text-sm mt-3">Tidak ada notifikasi saat ini.</p>
             </div>
         @else
-            <div class="space-y-2">
+            <div class="space-y-0 border border-[rgba(26,26,26,0.1)]">
                 @foreach($notifications as $notif)
                     @php
                         $unread = $notif->isUnread();
-                        $typeIcons = [
-                            'booking_pending'   => ['icon' => 'clock',     'color' => 'text-amber-600'],
-                            'booking_confirmed' => ['icon' => 'check',     'color' => 'text-[#16a34a]'],
-                            'booking_cancelled' => ['icon' => 'x-circle',  'color' => 'text-[#dc2626]'],
-                            'booking_completed' => ['icon' => 'clipboard', 'color' => 'text-[#2563eb]'],
-                            'payment_reminder'  => ['icon' => 'banknotes', 'color' => 'text-orange-500'],
+                        $typeColors = [
+                            'booking_pending'   => '#717974',
+                            'booking_confirmed' => '#C6FF00',
+                            'booking_cancelled' => '#BA1A1A',
+                            'booking_completed' => '#1A1A1A',
+                            'payment_reminder'  => '#C6FF00',
                         ];
-                        $meta = $typeIcons[$notif->type] ?? ['icon' => 'bell', 'color' => 'text-[#737373]'];
+                        $accentColor = $typeColors[$notif->type] ?? 'rgba(26,26,26,0.3)';
                     @endphp
-                    <div class="flex items-start gap-4 p-4 rounded-2xl bg-white border transition-colors
-                        {{ $unread ? 'border-l-2 border-l-[#16a34a] border-[#e5e5e5] bg-[#f0fdf4]' : 'border-[#e5e5e5]' }}">
-
-                        <div class="w-9 h-9 rounded-xl bg-[#f5f5f5] flex items-center justify-center shrink-0 {{ $unread ? 'bg-[#f0fdf4]' : '' }}">
-                            <x-icon name="{{ $meta['icon'] }}" class="w-4 h-4 {{ $meta['color'] }}" />
-                        </div>
-
-                        <div class="flex-1 min-w-0">
-                            <div class="flex items-start justify-between gap-3">
-                                <p class="text-sm {{ $unread ? 'font-semibold text-[#0a0a0a]' : 'font-medium text-[#404040]' }}">
-                                    {{ $notif->title }}
-                                </p>
-                                @if($unread)
-                                    <span class="w-2 h-2 rounded-full bg-[#16a34a] shrink-0 mt-1.5"></span>
-                                @endif
+                    <div class="flex border-b border-[rgba(26,26,26,0.08)] last:border-b-0 {{ $unread ? 'bg-white' : 'bg-[#F5F5F0]' }}"
+                         style="{{ $unread ? 'border-left: 4px solid #C6FF00' : '' }}">
+                        <div class="flex-1 flex items-start gap-4 p-5">
+                            <div class="w-9 h-9 shrink-0 flex items-center justify-center {{ $unread ? 'bg-[#C6FF00]' : 'bg-[rgba(26,26,26,0.06)]' }}">
+                                <x-icon name="{{ ['booking_pending'=>'clock','booking_confirmed'=>'check','booking_cancelled'=>'x-circle','booking_completed'=>'clipboard','payment_reminder'=>'banknotes'][$notif->type] ?? 'bell' }}"
+                                        class="w-4 h-4 {{ $unread ? 'text-[#1A1A1A]' : 'text-[#717974]' }}" />
                             </div>
-                            <p class="text-xs text-[#737373] mt-0.5 leading-relaxed">{{ $notif->message }}</p>
-                            <div class="flex items-center justify-between mt-2">
-                                <span class="text-xs text-[#a3a3a3]">{{ $notif->created_at->diffForHumans() }}</span>
-                                @if($unread)
-                                    <form method="POST" action="{{ route('notifications.read', $notif) }}">
-                                        @csrf
-                                        @method('PATCH')
-                                        <button type="submit" class="text-xs text-[#16a34a] hover:underline underline-offset-2 font-medium">
-                                            Tandai dibaca
-                                        </button>
-                                    </form>
-                                @endif
+                            <div class="flex-1 min-w-0">
+                                <div class="flex items-start justify-between gap-3">
+                                    <p class="text-sm font-bold {{ $unread ? 'text-[#1A1A1A] uppercase tracking-[0.03em]' : 'text-[#717974]' }}">
+                                        {{ $notif->title }}
+                                    </p>
+                                    @if($unread)
+                                        <span class="w-2 h-2 avatar-circle bg-[#C6FF00] shrink-0 mt-1.5"></span>
+                                    @endif
+                                </div>
+                                <p class="text-xs text-[#717974] mt-1 leading-relaxed">{{ $notif->message }}</p>
+                                <div class="flex items-center justify-between mt-2">
+                                    <span class="text-xs text-[rgba(26,26,26,0.4)]">{{ $notif->created_at->diffForHumans() }}</span>
+                                    @if($unread)
+                                        <form method="POST" action="{{ route('notifications.read', $notif) }}">
+                                            @csrf
+                                            @method('PATCH')
+                                            <button type="submit" class="text-xs font-bold uppercase tracking-[0.05em] text-[#0D3B2E] hover:text-[#C6FF00] transition-colors">
+                                                TANDAI DIBACA
+                                            </button>
+                                        </form>
+                                    @endif
+                                </div>
                             </div>
                         </div>
                     </div>

@@ -93,6 +93,8 @@ Route::middleware(['auth', 'role:owner,admin'])->prefix('owner')->name('owner.')
     Route::get('/fields/{field}/schedules', [Owner\ScheduleController::class, 'index'])->name('schedules.index');
     Route::post('/fields/{field}/schedules', [Owner\ScheduleController::class, 'store'])->name('schedules.store');
     Route::patch('/schedules/{schedule}/status', [Owner\ScheduleController::class, 'updateStatus'])->name('schedules.update-status');
+    Route::patch('/schedules/{schedule}/hours', [Owner\ScheduleController::class, 'updateHours'])->name('schedules.update-hours');
+    Route::delete('/schedules/{schedule}', [Owner\ScheduleController::class, 'destroy'])->name('schedules.destroy');
 
     // Bookings management
     Route::get('/bookings', [Owner\BookingController::class, 'index'])->name('bookings.index');

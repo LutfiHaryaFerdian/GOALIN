@@ -88,6 +88,57 @@ class ScheduleController extends Controller
         return redirect()->back()->with('success', 'Status slot berhasil diperbarui.');
     }
 
+    public function updateHours(Request $request, FieldSchedule $schedule)
+    {
+        $this->authorizeOwner($schedule->field);
+
+        if ($schedule->status === 'booked') {
+            return redirect()->back()->with('error', 'Slot yang sudah dipesan tidak dapat diubah.');
+        }
+
+        $request->validate([
+            'start_time' => ['required', 'date_format:H:i'],
+            'end_time'   => ['required', 'date_format:H:i', 'after:start_time'],
+            'notes'      => ['nullable', 'string', 'max:255'],
+        ]);
+
+        // Ensure update doesn't violate unique constraints for another slot
+        $exists = FieldSchedule::where('field_id', $schedule->field_id)
+            ->where('schedule_date', $schedule->schedule_date)
+            ->where('start_time', $request->start_time . ':00')
+            ->where('id', '!=', $schedule->id)
+            ->exists();
+
+        if ($exists) {
+            return redirect()->back()->with('error', 'Slot dengan jam mulai tersebut sudah terdaftar pada tanggal ini.');
+        }
+
+        $schedule->update([
+            'start_time' => $request->start_time . ':00',
+            'end_time'   => $request->end_time . ':00',
+            'notes'      => $request->notes,
+        ]);
+
+        FieldController::forgetScheduleCache($schedule->field_id);
+
+        return redirect()->back()->with('success', 'Jam slot berhasil diperbarui.');
+    }
+
+    public function destroy(FieldSchedule $schedule)
+    {
+        $this->authorizeOwner($schedule->field);
+
+        if ($schedule->status === 'booked') {
+            return redirect()->back()->with('error', 'Slot yang sudah dipesan tidak dapat dihapus.');
+        }
+
+        $schedule->delete();
+
+        FieldController::forgetScheduleCache($schedule->field_id);
+
+        return redirect()->back()->with('success', 'Slot jadwal berhasil dihapus.');
+    }
+
     private function authorizeOwner(Field $field): void
     {
         if ($field->owner_id !== Auth::id()) {

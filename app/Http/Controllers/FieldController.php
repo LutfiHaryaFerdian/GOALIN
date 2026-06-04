@@ -107,17 +107,18 @@ class FieldController extends Controller
 
         // Build compact status map — cached 60s so poll interval 30s gets fresh data
         $cacheKey = "field.slot_status.{$field->id}." . implode(',', $dates);
-        $slots = Cache::remember($cacheKey, 60, function () use ($field, $dates) {
+        $slotsArray = Cache::remember($cacheKey, 60, function () use ($field, $dates) {
             return \App\Models\FieldSchedule::select(['id', 'schedule_date', 'start_time', 'end_time', 'status'])
                 ->where('field_id', $field->id)
                 ->whereIn('schedule_date', $dates)
                 ->orderBy('schedule_date')
                 ->orderBy('start_time')
                 ->get()
-                ->mapWithKeys(fn($s) => [$s->id => $s->status]);
+                ->mapWithKeys(fn($s) => [$s->id => $s->status])
+                ->toArray();
         });
 
-        return response()->json(['slots' => $slots]);
+        return response()->json(['slots' => $slotsArray]);
     }
 
     /**
@@ -129,7 +130,7 @@ class FieldController extends Controller
     {
         $cacheKey = "field.schedules.{$fieldId}." . implode(',', $dates);
 
-        return Cache::remember($cacheKey, 300, function () use ($fieldId, $dates) {
+        $rawData = Cache::remember($cacheKey, 300, function () use ($fieldId, $dates) {
             return \App\Models\FieldSchedule::select(['id', 'field_id', 'schedule_date',
                                                       'start_time', 'end_time', 'status', 'notes'])
                 ->where('field_id', $fieldId)
@@ -137,8 +138,19 @@ class FieldController extends Controller
                 ->orderBy('schedule_date')
                 ->orderBy('start_time')
                 ->get()
-                ->groupBy(fn($s) => $s->schedule_date->format('Y-m-d'));
+                ->toArray();
         });
+
+        // Hydrate the models from raw array data so we always get fresh, fully-loaded models
+        $models = collect($rawData)->map(function ($item) {
+            $schedule = new \App\Models\FieldSchedule();
+            $schedule->forceFill($item);
+            // Ensure connection and exists properties are set so it behaves like a loaded model
+            $schedule->exists = true;
+            return $schedule;
+        });
+
+        return $models->groupBy(fn($s) => $s->schedule_date->format('Y-m-d'));
     }
 
     /**
